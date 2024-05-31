@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HOME!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link rel="icon" href="favicon.png">
+  <style>
+  /* Split the screen in half */
+.split {
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+/* Control the left side */
+.left {
+  left: 0;
+  background-color: #780909;
+}
+
+/* Control the right side */
+.right {
+  right: 0;
+  background-color:#0b0000;
+}
+
+/* If you want the content centered horizontally and vertically */
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: centered;
+}
+
+/* Style the image inside the centered container, if needed */
+.centered img {
+  width: 150px;
+  border-radius: 50%;
+}
+</style>
+</head>
+<body>
+    <div class="split left">
+        <div class="top">
+          {% if detail %}
+          <h1><font color="white">Problem {{detail.id}}</font></h2>
+          <p><font color="white">{{detail.desc}}</font></p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="split right">
+        <div class="top">
+          <h2><font color="white"><align="center">Code compiler</align><font color="white"></h2>
+            <form action="/execute/" method="post">{% csrf_token %}
+              <div>
+              <label for="language">Choose a language:</label>
+              <select name="language" id="language">
+                <option value="python">python</option>
+                <option value="c">c</option>
+                <option value="c++">c++</option>
+              </select>
+            </div>
+              <br><br>  
+            <div>
+            Code: <textarea rows="10" cols="50" name="code"></textarea>
+            </div>
+              <br>
+              <div>
+               Input:<textarea rows="10" cols="50" name="input"></textarea>
+              </div>
+              <br>
+              <button  type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Run code</button>
+            </form>
+        </div>
+      </div>
+</body>
+</html>
+
+
