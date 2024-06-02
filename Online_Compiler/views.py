@@ -1,11 +1,15 @@
 from django.shortcuts import render
 from Online_Compiler.models import User_Input
+from home.models import problem
 from django.http import HttpResponse
 from django.template import loader
+from django.contrib import messages
 from pathlib import Path
 from django.conf import settings
 import uuid
 import subprocess
+import filecmp
+import re
 # Create your views here.
 
 
@@ -20,7 +24,7 @@ def problem_page(request):
          sub=new 
          context={
              'sub':sub
-         }
+        }
          return render(request,'result.html',context)
     
     else:
@@ -109,3 +113,54 @@ def run_code(language,code,input):
         output_data=output_file.read()
      
     return output_data
+
+def submit_page(request,id):
+    
+    object=problem.objects.get(id=id)
+    input_test=object.input_test
+    output_test=object.output_test
+    project_path=Path(settings.BASE_DIR)
+    
+    directoriess =["test_outputs","user_outputs"]
+    
+    for directory in directoriess:
+        dir_path=project_path/directory
+        if not dir_path.exists():
+            dir_path.mkdir(parents=True,exist_ok=True)
+            
+    test_dir=project_path/ "test_outputs"
+    userO_dir=project_path/"user_outputs"
+    
+    unique=str(uuid.uuid4())
+    
+    output_test_file_name=f'{unique}.txt'
+    user_output_file_name=f'{unique}.txt'
+    output_test_path=test_dir/output_test_file_name
+    user_output_path=userO_dir/user_output_file_name
+    language=request.POST['language']
+    code=request.POST['code']
+    output_data=run_code(language,code,input_test)
+    with open(user_output_path,"w",newline='\n') as output_file:
+        output_file.write(output_data)
+        
+    with open(output_test_path,"w",newline='\n') as output_file:
+        output_file.write(output_test)  
+
+    
+ 
+ 
+
+    text1 = re.sub(r'\s+', ' ',output_data ).strip()
+    text2 = re.sub(r'\s+', ' ',output_test).strip()
+    
+    if text1==text2:
+        messages.info(request,"Code satifies all the test-cases")
+        template=loader.get_template('submit.html')
+        context={}
+        return HttpResponse(template.render(context,request))
+
+    else:
+        messages.info(request,'wrong answer')
+        template=loader.get_template('submit.html')
+        context={}
+        return HttpResponse(template.render(context,request))
