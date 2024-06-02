@@ -14,3 +14,5 @@ class User_Input(models.Model):
     input_data=models.TextField(null=True,blank=True)
     output_data=models.TextField(null=True,blank=True)
     time_stamp=models.DateTimeField(auto_now_add=True)
+    test_input=models.TextField(null=True,blank=True)
+    test_output=models.TextField(null=True,blank=True)
