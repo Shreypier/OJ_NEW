@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>HOME</title>
+    <style>
+        .head1 {
+            font-size: 20px;
+            color: white;
+            font-weight: bold;
+            padding :10px;
+          
+        }
+
+        .head2 {
+            font-size: 17px;
+            margin-left: 10px;
+            margin-bottom: 15px;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Lato', sans-serif;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://hdwallpaperim.com/wp-content/uploads/2017/09/17/60797-General.jpg');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            filter: blur(4px); /* Adjust the blur amount as needed */
+            z-index: -1;
+            opacity: 1;
+        }
+
+        .menu {
+            position: fixed;
+            left:0;
+            top:0;
+            width:100%;
+            justify-content:space-between;
+            align-items:center;
+            background-color:white;
+            padding: 10px 0px 10px 0px;
+            color:black ;
+            margin: 0 auto;
+            overflow: hidden;
+            border:2px solid black;
+            z-index: 1000;
+        }
+        .menu a {
+            float:left;
+            color: black;
+            display:block;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 20px;
+        }
+        .menu-head{
+            margin: 5 auto;
+        }
+        .menu-log {
+            right: auto;
+            float: right;
+        }
+        
+
+        footer {
+            width: 100%;
+            bottom: 0px;
+            background-color: #000;
+            color: #fff;
+            position: absolute;
+            padding-top: 20px;
+            padding-bottom: 50px;
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .body_sec {
+            margin-left:20px;
+            margin-top:15%;
+            color:white;
+        }
+        .dive{ 
+            width :80%; 
+            height:60px; 
+            margin-left:0px;
+            } 
+    
+        .section{
+            width:100%; 
+            height:100%; 
+            margin: 2rem 0;
+            color:black;
+            justify-content: center;
+            display:flex;
+            }
+        .icons { 
+                color: black;
+                display:flex;
+            } 
+        .menu-heading {
+                font-size: 24px;
+                font-weight: bold;
+            }
+              
+              
+        .round-image {
+            box-shadow: inset 0px 0px 40px 40px #DBA632;
+            position: absolute; /* Changed to absolute */
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            border-radius: 50%;
+            border: 2px solid black;
+            z-index: 1;
+            width:150px;
+            }
+              .container {
+                display: flex;
+                flex-wrap: wrap; /* Ensures that the cards wrap to the next line if they overflow the container */
+                gap:50px; /* Space out the cards evenly */
+              }
+              
+              .card {
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+                transition: 0.3s;
+                width:50%;
+                height:60%;
+                border-radius: 10px;
+                margin: 10px; /* Add margin to create space between the cards */
+                background-color:#202020;
+                text-color:white;
+              }
+              
+              .card:hover {
+                box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+                transform: scale(1.1);
+              }
+              
+              .card-content {
+                padding: 3px ;
+              }
+              @media screen and (max-width: 768px) {
+                .menu a {
+                    font-size: 18px;
+                    padding: 10px;
+                }
+    
+                .round-image {
+                    width: 100px;
+                }
+    
+                .container {
+                    flex-direction: column;
+                    text-align:left;
+                    padding:20px;
+                }
+    
+                .card {
+                    width: 90%;
+                }
+    
+                .body_sec {
+                    margin-top: 25%;
+                }
+            } 
+    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="Content-Language" content="en">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="google-site-verification" content="nXGC_JxO0yoP1qBzMnYD_xgufO6leSLw1kyNo2HZltM" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-RC512FD18N"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-RC512FD18N');
+	</script>
+
+	
+	<meta name="description" content="AtCoder is a programming contest site for anyone from beginners to experts. We hold weekly programming contests online.">
+	<meta name="author" content="AtCoder Inc.">
+
+	<meta property="og:site_name" content="AtCoder">
+	
+	<meta property="og:title" content="AtCoder" />
+	<meta property="og:description" content="AtCoder is a programming contest site for anyone from beginners to experts. We hold weekly programming contests online." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://atcoder.jp/" />
+	<meta property="og:image" content="https://img.atcoder.jp/assets/atcoder.png" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@atcoder" />
+	
+	<meta property="twitter:title" content="AtCoder" />
+    <link
+            rel="shortcut icon"
+            href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Circle-icons-dev.svg/1024px-Circle-icons-dev.svg.png"
+            type="image/png"
+        />
+	<link href="//fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="//img.atcoder.jp/public/f7e1508/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="//img.atcoder.jp/public/f7e1508/css/base.css">
+	
+	
+	<script src="//img.atcoder.jp/public/f7e1508/js/lib/jquery-1.9.1.min.js"></script>
+	<script src="//img.atcoder.jp/public/f7e1508/js/lib/bootstrap.min.js"></script>
+	<script src="//img.atcoder.jp/public/f7e1508/js/cdn/js.cookie.min.js"></script>
+	<script src="//img.atcoder.jp/public/f7e1508/js/cdn/moment.min.js"></script>
+	<script src="//img.atcoder.jp/public/f7e1508/js/cdn/moment_js-ja.js"></script>
+	<script>
+		var LANG = "en";
+		var userScreenName = "";
+		var csrfToken = "5x/nvr7BtKNGySs58pGmESc1UcU0YhOfjsaEKEazvV8="
+	</script>
+	<script src="//img.atcoder.jp/public/f7e1508/js/utils.js"></script>
+	
+	
+	
+	
+	
+		<script src="//img.atcoder.jp/public/f7e1508/js/cdn/run_prettify.js"></script>
+	
+	
+		<link rel="stylesheet" href="//img.atcoder.jp/public/f7e1508/css/cdn/katex.min.css">
+		<script defer src="//img.atcoder.jp/public/f7e1508/js/cdn/katex.min.js"></script>
+		<script defer src="//img.atcoder.jp/public/f7e1508/js/cdn/auto-render.min.js"></script>
+		
+		<script>
+			var katexOptions = {
+				delimiters: [
+					{left: "$$", right: "$$", display: true},
+					{left: "$", right: "$", display: false},
+					{left: "\\(", right: "\\)", display: false},
+					{left: "\\[", right: "\\]", display: true}
+				],
+      	ignoredTags: ["script", "noscript", "style", "textarea", "code", "option"],
+				ignoredClasses: ["prettyprint", "source-code-for-copy"],
+				throwOnError: false
+			};
+			document.addEventListener("DOMContentLoaded", function() { renderMathInElement(document.body, katexOptions);});
+		</script>
+	
+	
+		<script src="//img.atcoder.jp/public/f7e1508/js/lib/marked.js"></script>
+		<script src="//img.atcoder.jp/public/f7e1508/js/cdn/jquery.timeago.min.js"></script>
+		
+		<script src="//img.atcoder.jp/public/f7e1508/js/blog.js"></script>
+	
+	
+	
+	
+	<script src="//img.atcoder.jp/public/f7e1508/js/base.js"></script>
+</head>
+
+<body>
+            <div class="menu">
+                <strong>
+                    <a href="#home">Home</a>
+                    <a href="#contest">Contest</a>
+                    <a href="#services">Services</a>
+                    <div class="menu-log">
+                       <div class="icons">
+                         <i class="glyphicon glyphicon-user" style='font-size:40px'></i><a href="/accounts/login/">Login/Register</a>
+                       </div>
+                    </div>
+                <strong>
+            </div>
+          <br>
+          <hr>
+          <br><br>
+          
+            
+             <div class="body_sec">
+
+                <h1 id="demo" style="font-size:80px; margin-right:40%;" ></h1>
+                <script>
+                var i = 0;
+                var txt = 'Hey there , Welcome to CodeLANG';
+                var speed = 50;
+                
+                function typeWriter() {
+                  if (i < txt.length) {
+                    document.getElementById("demo").innerHTML += txt.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, speed);
+                  }
+                }
+                
+                // Automatically start the typewriter effect when the page loads
+                window.onload = typeWriter;
+                </script>
+        </div>
+        <br>
+        <br> <br>
+        <br>
+        <br>
+        <br> <br><br><br>
+        <div id="home">
+        </div><br><br><br><br><br><br><br>
+        <br><br><br><br>
+        </div>
+        <div class="container">
+            <div class="card">
+               <div class="head1">
+              <pre>  
+                <h4>Overview</h4>
+                Codelang is a web-based platform that
+                allows users to participate in programming
+                contests, solve coding problems, and test 
+                their algorithms against predefined test
+                cases. 
+
+                These platforms are popular among developers,
+                students,and coding enthusiasts for improving their 
+                problem-solving skills and competing in a 
+                global community.
+              </pre>
+               </div>
+            </div>
+        </div> 
+        <div id="contest">
+        </div>
+        <br><br><br>
+        <br><br><br>
+        
+       <div class="container"> 
+        <div class="card">
+            
+               <div class="head1">
+                <pre>
+                <h4> Contest Format:</h4>
+
+                1.Problems are usually of varying difficulty.
+                2.Contests last for 2 hours.
+                3.Participants are ranked based on the number
+                  of problems they solve and the time taken.
+                </pre>
+               </div>
+            </div>
+        </div> 
+        <div id="services">
+        </div>
+        <br><br><br>
+        <br><br><br> 
+       
+        <div class="container"> 
+            <div class="card">
+                   <div class="head1">
+                    <pre>
+                    <h4> Services:</h4>
+    
+1. Programming Contests:
+Regular Contests: OJs host regularly scheduled contests where
+participants compete to solve a set of problems within a fixed time.
+
+2. Problem Sets:
+Problem Library: A vast collection of problems categorized by difficulty, 
+topic, and popularity.Problem Submission: Users can submit their solutions
+to problems and receive immediate feedback on correctness and performance.
+
+3. User Profiles and Ranking:
+User Profiles: Track individual progress, submissions, and achievements.
+Ranking Systems: Global and regional leaderboards based on performance in
+contests and problem-solving.
+
+                    </pre>
+                   </div>
+                </div>
+            </div>  
+           
+    <br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+
+   
+</body>
+
+</html>

@@ -1,19 +1,183 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-  <meta charset="UTF-8" />
-  <title>HOME!</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-  <link rel="icon" href="favicon.png">
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .head1 {
+            font-size: 40px;
+            color: #009900;
+            font-weight: bold;
+        }
+
+        .head2 {
+            font-size: 17px;
+            margin-left: 10px;
+            margin-bottom: 15px;
+        }
+
+        body {
+            margin: 0 auto;
+            background-position: center;
+            background-size: contain;
+            background-color: black;
+        }
+
+        .menu {
+            position: sticky;
+            left: 0;
+            background-color: #780909;
+            padding: 10px 0px 10px 0px;
+            color: #FCCB06;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .menu a {
+            float: left;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .menu-log {
+            right: auto;
+            float: right;
+        }
+
+        footer {
+            width: 100%;
+            bottom: 0px;
+            background-color: #000;
+            color: #fff;
+            position: absolute;
+            padding-top: 20px;
+            padding-bottom: 50px;
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .body_sec {
+            margin-left: 100px;
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: flex-start;
+            gap: 120px;
+            /* Add gap between cards */
+        }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            width: calc(60% - 20px);
+            /* Adjust width to fit with gap */
+            margin-bottom: 20px;
+            word-wrap: break-word;
+        }
+
+        .container {
+            padding: 2px 16px;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .small-card {
+            width: calc(30% - 20px);
+            /* Smaller width for the User card */
+        }
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+          }
+          body {
+            margin: 0;
+            background-color: #202020; /* Change this color to whatever you want */
+            color: #202020; /* Ensures text is visible on the darker background */
+        }
+    </style>
+    
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="icon" href="favicon.png">
 </head>
-<body style="background-color:#0b0000;">
-  <h1 span style="color: #780909;">Problem</span></h1>
-   <ol>
-    {% for all in all_problems %}
-    <li><a href="/home/problem/id={{all.id}}/"><font color="white">{{all.Name}}</font></a></li>
-    {% endfor %}
-   </ol>
+
+<body>
+    
+    <!-- Menu Navigation Bar -->
+    <div class="menu">
+        <a href="/home/">HOME</a>
+        <a href="/home/problems/">PROBLEMS</a>
+        <a href="#test">COMPETE</a>
+        <a href="#rating">RATING</a>
+        <div class="menu-log">
+            <a href="/home/logout/">LOGOUT</a>
+            <font color="white"><h3>{{username}}</3></font>
+        </div>
+    </div>
+    <!-- Body section -->
+    <div class="body_sec">
+        <div class="card">
+            <div class="container">
+                <h4><b>Information</b></h4>
+                <p>CodeLANG is a web-based platform that allows users to practice programming and algorithm skills by submitting code to solve predefined problems. These platforms automatically evaluate the submitted code against a set of test cases and provide feedback on its correctness and efficiency. Here are some key features and aspects of CodeLANG:</p>
+                <ul>
+                    <li>Variety: Problems range from basic syntax exercises to complex algorithmic challenges.</li>
+                    <li>Categories: Problems are often categorized by difficulty level, topic (e.g., sorting, dynamic programming), or type (e.g., coding challenges, competitive programming problems).</li>
+                    <li>Submission and Evaluation:</li>
+                    <ul>
+                        <li>Code Submission: Users submit their solutions in various programming languages.</li>
+                        <li>Automated Testing: Submitted code is tested against multiple test cases to ensure correctness and performance.</li>
+                        <li>Feedback: Immediate feedback is provided, indicating whether the solution passed or failed the test cases and, in some cases, detailed error messages or performance metrics.</li>
+                    </ul>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card small-card">
+            <div class="container">
+                <h4 style="text-align:center;"><b>User</b></h4>
+                <hr>
+                <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/128x128/plain/user.png" alt="Avatar" class="center">
+        
+               <pre>
+
+            Rating:1000 
+            Problems: 2
+            Div: 4
+            Number of Tasks: 6
+            Rated range: ~ 2799
+               </pre>
+                 
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="container">
+                <h4><b>Contest Announcement</b></h4>
+                <p>We will hold 2 weekly Regular Contests.</p>
+                <ul>
+                    <li>Contest Date: 12/06/2024</li>
+                    <li>Start Time: 15:30 IST</li>
+                    <li>Duration: 120 minutes</li>
+                    <li>Number of Tasks: 6</li>
+                    <li>Rated range: ~ 2799</li>
+                    <li>Point values: 300-500-500-700-800-1000.</li>
+                </ul>
+                <p>We are looking forward to your participation!</p>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>
