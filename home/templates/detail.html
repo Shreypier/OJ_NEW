@@ -6,62 +6,305 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <link rel="icon" href="favicon.png">
   <style>
-  /* Split the screen in half */
-.split {
-  height: 100%;
-  width: 50%;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  overflow-x: hidden;
-  padding-top: 20px;
-}
+    /* Split the screen in half */
+    .split {
+      height: 91%;
+      width: 50%;
+      position: fixed;
+      z-index: 1;
+      bottom: 0;
+      overflow-x: hidden;
+      padding-top: 20px;
+    }
 
-/* Control the left side */
-.left {
-  left: 0;
-  background-color: #780909;
-}
+    /* Control the left side */
+    .left {
+      left: 0;
+      background-color:#2C2C2C;
+      border-right: 8px solid black;
+      border-top: 8px solid black;
+    }
 
-/* Control the right side */
-.right {
-  right: 0;
-  background-color:#0b0000;
-}
+    /* Control the right side */
+    .right {
+      right: 0;
+      background-color: #202020;
+      border-top: 8px solid black;
+    }
+    .button-container {
+      text-align: center;
+      justify-content: space-between;
+    }
+    /* If you want the content centered horizontally and vertically */
+    .centered {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: centered;
+    }
 
-/* If you want the content centered horizontally and vertically */
-.centered {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: centered;
-}
+    /* Style the image inside the centered container, if needed */
+    .centered img {
+      width: 150px;
+      border-radius: 50%;
+    }
 
-/* Style the image inside the centered container, if needed */
-.centered img {
-  width: 150px;
-  border-radius: 50%;
-}
-</style>
+    .cards-container {
+      display: flex;
+      gap: 0px;  /* Space between cards */
+      margin-left: 10px;
+      background-color-white;
+    }
+
+    .copy-button {
+      right: auto;
+      float: right;
+    }
+
+    hr {
+      border: none;
+      height: 1px;
+      /* Set the hr color */
+      color: white;  /* old IE */
+      background-color: white;  /* Modern Browsers */
+    }
+
+    hr.1 {
+      border: none;
+      height: 3px;
+      /* Set the hr color */
+      color: white;  /* old IE */
+      background-color: white;  /* Modern Browsers */
+    }
+
+    hr.white {
+      background-color: white; /* White hr color */
+    }
+
+    .card {
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+      transition: 0.3s;
+      width: 48%;
+      margin-left: 5px;
+      display: flex;
+      background-color:#404040;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between; /* Align items to the start and end of the header */
+      align-items: center;
+      padding-right: 10px; /* Add some padding to the right side of the header */
+      background-color:#404040;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    }
+
+    .container {
+      padding: 2px 16px;
+      margin-left:0px;
+      background-color:#404040;
+    }
+
+    .code-container {
+      display: flex;
+      border: 1px solid #555;
+      background-color: #F5FEFD;
+      height: 300px; /* Fixed height for the code area */
+      overflow: hidden; /* Hide overflow from both line numbers and code area */
+    }
+
+    .line-numbers {
+      padding: 12px;
+      background-color: #202020;
+      border-right: 1px solid #555;
+      user-select: none;
+      color: white; /* Line numbers color */
+      overflow-y: auto; /* Add vertical scroll to line numbers */
+      height: 100%;
+    }
+
+    .code-area {
+      flex-grow: 1;
+      padding: 12px;
+      border: none;
+      outline: none;
+      resize: none;
+      background-color:#2C2C2C;
+      color: white; /* Code text color */
+      margin: 0; /* Remove margin */
+      height: 100%;
+      overflow: auto; /* Add scroll bar */
+    }
+
+    .code-area-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin: 0; /* Remove margin */
+    }
+    .submit-button {
+      background-color: #007bff; /* Bluish color */
+      border: none;
+      color: ;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+   /* Rounded corners */
+    }
+
+    /* Hover effect */
+    .submit-button:hover {
+      background-color: #007bff; /* Darker bluish color on hover */
+    }
+    .submit-buttons {
+      background-color: white; /* Bluish color */
+      border: none;
+      color: black;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+   /* Rounded corners */
+    }
+
+    /* Hover effect */
+    .submit-buttons:hover {
+      background-color: white; /* Darker bluish color on hover */
+    }
+    textarea {
+      width: 100%;
+      background-color: #2C2C2C;
+      color: white; /* Input text color */
+      border-bottom:30px;
+      border-left:30px solid #202020;
+      border-bottom:30px solid #202020;
+      resize:none;
+      outline: none;
+    }
+
+    .code-header {
+      background-color: black;
+      color: white;
+      padding: 10px;
+      margin-left:5px;
+      border-top: 1px solid #555;
+      border-bottom: 1px solid #555;
+      margin: 0; /* Remove margin */
+    }
+
+    /* Top navigation styling */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color:#202020;
+      border-bottom: 8px solid black;
+    }
+
+    .top-nav a {
+      color: white;
+      text-decoration: none;
+      padding: 10px;
+    }
+
+    .top-nav .center {
+      color: white;
+    }
+
+    .top-nav .head {
+      color:white;
+      margin-left:0px;
+    }
+
+    .navigation-links {
+      display: flex;
+      align-items: center;
+    }
+  </style>
 </head>
-<body>
+<body> 
+  <div class="top-nav">
+    <div class="head">Difficulty: {{detail.level}}</div>
+    <div class="navigation-links">
+      <a href="#">Code</a>
+      <a href="#">Submissions</a>
+    </div>
+  </div>
     <div class="split left">
-        <div class="top">
+        <div class="top"> 
           {% if detail %}
-          <h1><font color="white">Problem {{detail.id}}</font></h2>
-          <p><font color="white">{{detail.desc}}</font></p>
-          {% endif %}
+          <h2><font color="white" style="margin-left:10px;">{{detail.Name}} </font></h2>
+            <hr>
+            <br>
+          <p><font color="white" style="margin-left:10px;">{{detail.desc}}</font></p>
+          <br><br>
+          
+          <h3><font color="white" style="margin-left:10px;">Input </font></h3>
+          <br>
+          <pre><font color="white" style="margin-left:10px;">{{ detail.input_constraints|linebreaksbr }}</font></pre>
+          <br><br>
+          
+          <h3><font color="white" style="margin-left:10px;">Output </font></h3>
+          <br>
+          <pre><font color="white" style="margin-left:10px;">{{ detail.output_constraints|linebreaksbr }}</font></pre>
+          <br><br>
+          
+          <h3><font color="white" style="margin-left:10px;">Constraint </font></h3>
+          <br>
+          <pre><font color="white" style="margin-left:10px;">{{ detail.constraint|linebreaksbr }}</font></pre>
+          <br><hr><br>
+          <h3><font color="white" style="margin-left:10px;">Example </font></h3>
+          <br>
+          <div class="cards-container">
+          <div class="card">
+            <div class="container">
+              <div class="card-header">
+              <h6><font color="white" style="margin-top:0px;">Input</font></h6>
+              <button class="copy-button" onclick="copyText('textToCopy')"><i class="fas fa-copy" style="font-size:5px;color:red;"></i></button>
+              </div>
+              <hr class="white">
+              <div id="textToCopy">
+              <pre><font color="white" style="margin-left:0px;">{{ detail.examples|linebreaksbr }}</font></pre>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="container">
+              <div class="card-header">
+              <h6><font color="white" style="margin-left:0px;">Output </font></h6>
+              <button class="copy-button" onclick="copyText('textToCopy1')"><i class="fas fa-copy"></i></button>
+              </div>
+              <hr class="white">
+              <div id="textToCopy1">
+              <pre><font color="white" style="margin-left:0px;">{{ detail.output_const|linebreaksbr }}</font></pre>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="split right">
+        </div><br>
+        {% endif %}
+    </div>
+    <div class="split right">
         <div class="top">
-          <h2><font color="white"><align="center">Code compiler</align><font color="white"></h2>
-            <form action="/execute/" method="post">{% csrf_token %}
+          <h2><font color="white"><align="center">Code compiler</align></font></h2>
+            <form action="?" method="post">{% csrf_token %}
               <div>
-              <label for="language">Choose a language:</label>
+              <label for="language"><font color="white">Choose a language:</font></label>
               <select name="language" id="language">
                 <option value="python">python</option>
                 <option value="c">c</option>
@@ -69,20 +312,97 @@
               </select>
             </div>
               <br><br>  
-            <div>
-            Code: <textarea  rows="10" cols="50" name="code" spellcheck="false"></textarea>
+              
+              {% if sub %}
+              <div class="code-header">Code</div>
+              <div class="code-container">
+                <div class="line-numbers" id="line-numbers">1</div>
+                <div class="code-area-container">
+             <textarea class="code-area" id="code-area"  rows="10" cols="20" name ="code" spellcheck="false">{{sub.code}}</textarea>
             </div>
-              <br>
+          </div>
+      
               <div>
-               Input:<textarea rows="10" cols="50" name="input"></textarea>
+                <div class="code-header">Input</div>
+              <textarea rows="5" cols="20" name="input">{{sub.input_data}}</textarea>
               </div>
-              <br>
-              <button  type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Run code</button>
-              <button  type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4" formaction="/home/id={{ detail.id }}/submit/">Submit code</button>
+          
+              <div>
+                <div class="code-header">Output</div>
+                   <textarea rows="5" cols="20" readonly>{{sub.output_data}}</textarea>
+              </div>
+            
+             {% else %}
+             <div class="code-header">Code</div>
+              <div class="code-container">
+                <div class="line-numbers" id="line-numbers">1</div>
+                <div class="code-area-container">
+             <textarea class="code-area" id="code-area"  rows="10" cols="20" name ="code" spellcheck="false"></textarea>
+            </div>
+          </div>
+      
+              <div>
+                <div class="code-header">Input</div>
+              <textarea rows="5" cols="20" name="input"></textarea>
+              </div>
+            
+             {% endif %}
+            <div class="button-container">
+              <button type="submit" class="submit-buttons"> Run~ </button>
+              <button type="submit" class="submit-button"  formaction="/home/id={{ detail.id }}/submit/">Submit</button>
+            </div>
             </form>
         </div>
-      </div>
+    </div>
+      
+
+  <script>
+    function copyText(containerId) {
+      // The text to copy
+      var textToCopy = document.getElementById(containerId).innerText;
+      
+      // Create a temporary textarea element to hold the text to copy
+      var tempTextarea = document.createElement("textarea");
+      tempTextarea.value = textToCopy;
+      document.body.appendChild(tempTextarea);
+    
+      // Select the text in the textarea
+      tempTextarea.select();
+      tempTextarea.setSelectionRange(0, 99999); // For mobile devices
+    
+      // Copy the text inside the textarea
+      navigator.clipboard.writeText(tempTextarea.value).then(function() {
+        // Alert the copied text
+        alert("Copied the text: " + tempTextarea.value);
+      }, function(err) {
+        console.error('Could not copy text: ', err);
+      });
+    
+      // Remove the temporary textarea element
+      document.body.removeChild(tempTextarea);
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js"></script>
+  <script>
+    const codeArea = document.getElementById('code-area');
+    const lineNumbers = document.getElementById('line-numbers');
+
+    codeArea.addEventListener('input', updateLineNumbers);
+    codeArea.addEventListener('scroll', syncScroll);
+
+    function updateLineNumbers() {
+      const lines = codeArea.value.split('\n').length;
+      lineNumbers.innerHTML = Array(lines).fill(0).map((_, i) => i + 1).join('<br>');
+    }
+
+    function syncScroll() {
+      lineNumbers.scrollTop = codeArea.scrollTop;
+    }
+
+    updateLineNumbers();
+  </script>
+ 
+  
 </body>
 </html>
-
-

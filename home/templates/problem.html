@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width,
+                 initial-scale=1.0">
+    <title>CodeLANG</title>
+    <style>
+        .head1 {
+            font-size: 40px;
+            color: #009900;
+            font-weight: bold;
+        }
+
+        .head2 {
+            font-size: 17px;
+            margin-left: 10px;
+            margin-bottom: 15px;
+        }
+
+        body {
+            margin: 0 auto;
+            background-position: center;
+            background-size: contain;
+            background-color:black;
+        }
+
+        .menu {
+            position: sticky;
+            left:0;
+            background-color:#780909;
+            padding: 10px 0px 10px 0px;
+            color:#780909 ;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .menu a {
+            float:left;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .menu-log {
+            right: auto;
+            float: right;
+        }
+
+        footer {
+            width: 100%;
+            bottom: 0px;
+            background-color: #000;
+            color: #fff;
+            position: absolute;
+            padding-top: 20px;
+            padding-bottom: 50px;
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+        }
+    
+        .body_sec {
+            margin-left: 80px;
+        }
+
+    table,th,td {
+        border: 2px solid black;
+        border-collapse: collapse;  
+    }
+    
+    td,th {
+        padding-right: 100px;
+        margin-left:auto;
+        margin-right:auto;
+    }
+ 
+    
+    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="Content-Language" content="en">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="google-site-verification" content="nXGC_JxO0yoP1qBzMnYD_xgufO6leSLw1kyNo2HZltM" />
+
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-RC512FD18N"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-RC512FD18N');
+	</script>
+
+	
+	<meta name="description" content="AtCoder is a programming contest site for anyone from beginners to experts. We hold weekly programming contests online.">
+	<meta name="author" content="AtCoder Inc.">
+
+	<meta property="og:site_name" content="AtCoder">
+	
+	<meta property="og:title" content="AtCoder" />
+	<meta property="og:description" content="AtCoder is a programming contest site for anyone from beginners to experts. We hold weekly programming contests online." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://atcoder.jp/" />
+	<meta property="og:image" content="https://img.atcoder.jp/assets/atcoder.png" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@atcoder" />
+	
+	<meta property="twitter:title" content="AtCoder" />
+    <link
+            rel="shortcut icon"
+            href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Circle-icons-dev.svg/1024px-Circle-icons-dev.svg.png"
+            type="image/png"
+        />
+	<link href="//fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="//img.atcoder.jp/public/f7e1508/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="//img.atcoder.jp/public/f7e1508/css/base.css">
+	
+	
+	<script src="//img.atcoder.jp/public/f7e1508/js/lib/jquery-1.9.1.min.js"></script>
+	<script src="//img.atcoder.jp/public/f7e1508/js/lib/bootstrap.min.js"></script>
+	<script src="//img.atcoder.jp/public/f7e1508/js/cdn/js.cookie.min.js"></script>
+	<script src="//img.atcoder.jp/public/f7e1508/js/cdn/moment.min.js"></script>
+	<script src="//img.atcoder.jp/public/f7e1508/js/cdn/moment_js-ja.js"></script>
+	<script>
+		var LANG = "en";
+		var userScreenName = "";
+		var csrfToken = "5x/nvr7BtKNGySs58pGmESc1UcU0YhOfjsaEKEazvV8="
+	</script>
+	<script src="//img.atcoder.jp/public/f7e1508/js/utils.js"></script>
+	
+	
+	
+	
+	
+		<script src="//img.atcoder.jp/public/f7e1508/js/cdn/run_prettify.js"></script>
+	
+	
+		<link rel="stylesheet" href="//img.atcoder.jp/public/f7e1508/css/cdn/katex.min.css">
+		<script defer src="//img.atcoder.jp/public/f7e1508/js/cdn/katex.min.js"></script>
+		<script defer src="//img.atcoder.jp/public/f7e1508/js/cdn/auto-render.min.js"></script>
+		
+		<script>
+			var katexOptions = {
+				delimiters: [
+					{left: "$$", right: "$$", display: true},
+					{left: "$", right: "$", display: false},
+					{left: "\\(", right: "\\)", display: false},
+					{left: "\\[", right: "\\]", display: true}
+				],
+      	ignoredTags: ["script", "noscript", "style", "textarea", "code", "option"],
+				ignoredClasses: ["prettyprint", "source-code-for-copy"],
+				throwOnError: false
+			};
+			document.addEventListener("DOMContentLoaded", function() { renderMathInElement(document.body, katexOptions);});
+		</script>
+	
+	
+		<script src="//img.atcoder.jp/public/f7e1508/js/lib/marked.js"></script>
+		<script src="//img.atcoder.jp/public/f7e1508/js/cdn/jquery.timeago.min.js"></script>
+		
+		<script src="//img.atcoder.jp/public/f7e1508/js/blog.js"></script>
+	
+	
+	
+	
+	
+	
+	
+	
+	<script src="//img.atcoder.jp/public/f7e1508/js/base.js"></script>
+    
+</head>
+
+<body >
+    
+
+    <!-- Menu Navigation Bar -->
+    <nav class="menu">
+        <a href="/home/">HOME</a>
+        <a href="/home/problems/">PROBLEMS</a>
+        <a href="#test">COMPETE</a>
+        <a href="#rating">
+            RATING
+        </a>
+        <div class="menu-log">
+            <a href="/home/logout/">LOGOUT</a>
+        </div>
+    </nav>
+   <br><br><br><br>
+    <main class="body_sec">
+      <section id="Content">
+        <table width="70%">
+          <tr>
+            <th><font color ="black">Problem Name</font></th>
+            <th><font color="black">Difficulty</font></th>
+          </tr>
+          {% for all in all_problems %}
+          <tr>
+            <td><a href="/home/problem/id={{all.id}}/" style="text-decoration:none"><font color="black"><strong>{{all.Name}}</strong></font></a></td>
+            <td><font color="black">{{all.level}}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </section>
+    </main>
+   
+</body>
+
+</html>

@@ -1,31 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Login</title>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #FFE5B4;
+        }
+        .result-container {
+            background-color: #000000;
+            color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            margin-bottom: 80px; /* Added margin to the bottom */
+        }
+        .alert {
+            margin-top: 20px;
+        }
+        .code-container {
+            background-color: #2C2C2C;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .code-container pre {
+            color: #FFFFFF;
+        }
+        .run-another-code-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
 </head>
-<body style="background-color:#0b0000;">
-	<div class="container mt-5">
-		<!-- Login form -->
-		<form method="post" enctype="multipart/form-data">
-			<h1 style="text-align: center;"><span style="color: #780909;">RESULT:</span></h1>
+<body>
+    <div class="container mt-5">
+        <!-- Display error/success messages -->
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
+                {% elif message.tags == 'error' %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
 
-			{% csrf_token %} <!-- CSRF token for security -->
+        <!-- Result container -->
+        {% if sub %}
+        <div class="result-container">
+            <p><strong>Language :</strong> {{ sub.language }}</p>
+            <div class="code-container">
+                <p><strong>Code :</strong></p>
+                <pre>{{ sub.code }}</pre>
+            </div>
+        </div>
+        {% endif %}
+    </div>
 
-			<hr>
+    <!-- Run another code button -->
+    <button class="btn btn-primary run-another-code-btn" onclick="window.history.back();">Run another code</button>
 
-			<!-- Display error/success messages -->
-			{% if messages %}
-			<div class="alert alert-primary" role="alert">
-				{% for message in messages %}
-				{{ message }}
-				{% endfor %}
-			</div>
-			{% endif %}
-            
-			
-	</div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+          

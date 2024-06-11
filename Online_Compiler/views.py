@@ -8,7 +8,6 @@ from pathlib import Path
 from django.conf import settings
 import uuid
 import subprocess
-import filecmp
 import re
 # Create your views here.
 
@@ -25,11 +24,11 @@ def problem_page(request):
          context={
              'sub':sub
         }
-         return render(request,'result.html',context)
+         return render(request,'/problem/',context)
     
     else:
         
-        template=loader.get_template("result.html")
+        template=loader.get_template("detail.html")
         context={}
         return HttpResponse(template.render(context,request))
     
@@ -145,22 +144,32 @@ def submit_page(request,id):
         
     with open(output_test_path,"w",newline='\n') as output_file:
         output_file.write(output_test)  
-
-    
- 
- 
-
-    text1 = re.sub(r'\s+', ' ',output_data ).strip()
-    text2 = re.sub(r'\s+', ' ',output_test).strip()
+      
+    text1 = re.sub(r'\s+', ' ',output_data).strip()
+    text2 = re.sub(r'\s+', ' ',output_test).strip()  
+    language=request.POST['language']
+    code=request.POST['code']
+    input_data=request.POST['input']
+    output_data=run_code(language,code,input_data)
+    new=User_Input(language=language, code=code, input_data=input_data,output_data=output_data) 
+    new.save()
+    sub=new 
+         
+  
     
     if text1==text2:
-        messages.info(request,"Code satifies all the test-cases")
-        template=loader.get_template('submit.html')
-        context={}
-        return HttpResponse(template.render(context,request))
-
+            messages.success(request,"Submission successful")
+            template=loader.get_template('submit.html')
+            context={
+                'sub':sub
+            }
+            return HttpResponse(template.render(context,request))
     else:
-        messages.info(request,'wrong answer')
-        template=loader.get_template('submit.html')
-        context={}
-        return HttpResponse(template.render(context,request))
+            messages.error(request,'wrong answer')
+            template=loader.get_template('submit.html')
+            context={
+                'sub':sub
+            }
+            return HttpResponse(template.render(context,request))
+
+ 

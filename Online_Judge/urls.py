@@ -19,11 +19,13 @@ from django.urls import path,include
 from django.conf import settings   # Application settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
+from Online_Judge.views import first
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/',include("accounts.urls")),
     path('home/',include("home.urls")),
     path('execute/',include("Online_Compiler.urls")),
+    path('',first,name='first-page'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

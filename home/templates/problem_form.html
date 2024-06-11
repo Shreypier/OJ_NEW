@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body style="background-color:#0b0000;">
+	<div class="container mt-5">
+		<!-- Login form -->
+		<form method="post" enctype="multipart/form-data">
+            <br>
+			<h2 style="text-align: center;"><span style="color: #780909;">Add Problem</span></h2>
+
+			{% csrf_token %} <!-- CSRF token for security -->
+
+			<hr>
+
+			<!-- Display error/success messages -->
+			{% if messages %}
+			<div class="alert alert-primary" role="alert">
+				{% for message in messages %}
+				{{ message }}
+				{% endfor %}
+			</div>
+			{% endif %}
+
+			<form>
+                <!-- Email input -->
+                <div data-mdb-input-init class="form-group">
+                    <label class="form-label" for="form2Example1"><font color ="white">Name</font></label>
+                  <input type="text" name="Name" class="form-control" />
+                </div>
+              
+                <!-- Password input -->
+                <div data-mdb-input-init class="form-group">
+                    <label class="form-label" for="form2Example2"><font color="white">level</font></label>
+                  <input type="text" name="level" class="form-control" />
+                </div>
+                <div data-mdb-input-init class="form-group">
+                    <label class="form-label" for="form2Example2"><font color="white">description</font></label>
+                  <input type="text" name="desc" class="form-control" />
+                </div> 
+                <div>
+                    <div class="form-group">
+                        <div class="col d-flex justify-content-center">
+                        </div>
+                        <font color="white">Input_test:</font><br>
+                        <textarea  rows="5" cols="30" name="input_test" spellcheck="false"></textarea>
+                    </div>
+                      <br>
+                      <div>
+                        <font color="white">Output_test:</font><br>
+                        <textarea rows="5" cols="30" name="output_test"></textarea>
+                      </div>
+                      <br>
+                      <button  type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Create</button>
+                     
+              </form>
+		</form>
+	</div>
+</body>
+</html>
