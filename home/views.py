@@ -8,24 +8,18 @@ from django.contrib.auth.decorators import login_required
 from home.models import problem
 from Online_Compiler.models import User_Input
 from Online_Compiler.views import run_code
-# Create your views here.
-@login_required
-def starts(request):
-    user=User.objects.filter()
-    template=loader.get_template("start.html")
-    context={
-        'user':user,
-    }
-    return HttpResponse(template.render(context,request))  
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 
 @login_required
-def problems(request):
-    all_problems=problem.objects.all()
-    template=loader.get_template("problem.html")
-    context={
-        'all_problems':all_problems,
+def start(request):
+    all_problems = problem.objects.all()  # Fetch all problems
+    context = {
+        'username': request.user.username,
+        'all_problems': all_problems,
     }
-    return HttpResponse(template.render(context,request))
+    return render(request, 'start.html', context)
+
 
 @login_required
 def problem_details(request,id):
@@ -50,28 +44,79 @@ def problem_details(request,id):
      }
      return HttpResponse(template.render(context,request))
 
-@login_required
-def add_problem(request):
-    if request.method=='POST':
-        Name=request.POST['Name']
-        level=request.POST['level']
-        desc=request.POST['desc']
-        input_test=request.POST['input_test']
-        output_test=request.POST['output_test']
-            
-        new=problem(Name=Name,level=level,desc=desc,input_test=input_test,output_test=output_test)
-        new.save()
-        context={}
-        return render(request,'problem_form.html',context)
-    
+
+def manage_problem(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'create':
+            # Extract form data from POST request
+            name = request.POST.get('Name')
+            level = request.POST.get('level')
+            desc = request.POST.get('desc')
+            input_test = request.POST.get('input_test')
+            output_test = request.POST.get('output_test')
+
+            # Check if any field is empty
+            if not all([name, level, desc, input_test, output_test]):
+                messages.error(request, "All fields are required for creating a problem.")
+                return redirect('manage_problems')
+
+            # Create a new Problem instance and save it
+            new_problem = problem(
+                Name=name,
+                level=level,
+                desc=desc,
+                input_test=input_test,
+                output_test=output_test
+            )
+            new_problem.save()
+            messages.success(request, "Problem added successfully")
+
+        elif action == 'update':
+            problem_id = request.POST.get('update_id')
+            if not problem_id:
+                messages.error(request, "No problem ID provided for update.")
+                return redirect('manage_problems')
+
+            problem_instance = get_object_or_404(problem, id=problem_id)
+
+            # Update the problem instance with new data
+            problem_instance.Name = request.POST.get('Name', problem_instance.Name)
+            problem_instance.level = request.POST.get('level', problem_instance.level)
+            problem_instance.desc = request.POST.get('desc', problem_instance.desc)
+            problem_instance.input_test = request.POST.get('input_test', problem_instance.input_test)
+            problem_instance.output_test = request.POST.get('output_test', problem_instance.output_test)
+            problem_instance.save()
+            messages.success(request, "Problem updated successfully")
+
+        elif action == 'delete':
+            problem_id = request.POST.get('delete_id')
+            if not problem_id:
+                messages.error(request, "No problem ID provided for deletion.")
+                return redirect('manage_problem')
+
+            problem_instance = get_object_or_404(problem, id=problem_id)
+            problem_instance.delete()
+            messages.success(request, "Problem deleted successfully")
+
+        return redirect('manage_problem')
+
     else:
-        
-        template=loader.get_template("problem_form.html")
-        context={}
-        return HttpResponse(template.render(context,request))
+        all_problems = problem.objects.all()
+
+        context = {
+            'all_problems': all_problems,
+        }
+        return render(request, 'problem_form.html', context)
     
 
 def logout_user(request):
     logout(request)
     messages.info(request,'Logged Out Succesfully')
     return redirect('/accounts/login/')
+
+def logout_employee(request):
+    logout(request)
+    messages.info(request,'Logged Out Succesfully')
+    return redirect('/accounts/employee_login/')

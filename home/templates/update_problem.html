@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0b0000;
+            margin: 0;
+            font-family: 'Lato', sans-serif;
+            transition: margin-left 0.5s;
+        }
+
+        .container {
+            margin-top: 100px; /* Adjusted for top bar */
+            position: relative;
+        }
+
+        #mySidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #780909;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        #mySidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 25px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+
+        #mySidebar a:hover {
+            color: black;
+            background-color: #ccc;
+        }
+
+        #main-content {
+            padding: 16px;
+            margin-left: 250px; /* Adjusted margin when sidebar is open */
+            transition: margin-left 0.5s;
+        }
+
+        #openbtn {
+            font-size: 20px;
+            cursor: pointer;
+            color: black;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+
+        #openbtn:hover {
+            color: black;
+        }
+
+        .top-bar {
+            width: 100%;
+            height: 60px;
+            background-color: #780909;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            border-bottom :2px solid black;
+            border-color:black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .top-bar #openbtn {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="mySidebar">
+        <a href="#" onclick="toggleSidebar()">Create</a>
+        <a href="#" onclick="toggleSidebar()">Update</a>
+        <a href="#" onclick="toggleSidebar()">Delete</a>
+    </div>
+
+    <div class="top-bar">
+        <button id="openbtn" onclick="toggleSidebar()">☰ </button>
+        <h1>CodeLANG</h1>
+    </div>
+
+    <div id="main-content" class="container">
+        <!-- Your main content here -->
+        <div class="container mt-5">
+            <!-- Login form -->
+            <form method="post" enctype="multipart/form-data">
+                <h2><span style="color: #780909;">Add Problem</span></h2>
+
+                {% csrf_token %} <!-- CSRF token for security -->
+
+                <hr>
+
+                <!-- Display error/success messages -->
+                {% if messages %}
+                <div class="alert alert-primary" role="alert">
+                    {% for message in messages %}
+                    {{ message }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form>
+                    <div data-mdb-input-init class="form-group">
+                        <label class="form-label" for="form2Example1"><font color="white">Name</font></label>
+                        <input type="text" name="Name" class="form-control" />
+                    </div>
+
+                    <div data-mdb-input-init class="form-group">
+                        <label class="form-label" for="form2Example2"><font color="white">Level</font></label>
+                        <input type="text" name="level" class="form-control" />
+                    </div>
+
+                    <div data-mdb-input-init class="form-group">
+                        <label class="form-label" for="form2Example2"><font color="white">Description</font></label>
+                        <input type="text" name="desc" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input_test"><font color="white">Input Test:</font></label><br>
+                        <textarea rows="5" cols="30" name="input_test" spellcheck="false"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="output_test"><font color="white">Output Test:</font></label><br>
+                        <textarea rows="5" cols="30" name="output_test"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block mb-4">Create</button>
+
+                </form>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Function to toggle sidebar
+        function toggleSidebar() {
+            var sidebar = document.getElementById("mySidebar");
+            var mainContent = document.getElementById("main-content");
+
+            if (sidebar.style.left === "-250px" || sidebar.style.left === "") {
+                sidebar.style.left = "0";
+                mainContent.style.marginLeft = "250px"; /* Adjusted margin when sidebar is open */
+            } else {
+                sidebar.style.left = "-250px";
+                mainContent.style.marginLeft = "0"; /* Adjusted margin when sidebar is closed */
+            }
+        }
+
+        // Initially open sidebar when page loads
+        window.onload = function() {
+            var sidebar = document.getElementById("mySidebar");
+            var mainContent = document.getElementById("main-content");
+
+            sidebar.style.left = "0";
+            mainContent.style.marginLeft = "250px"; /* Adjusted margin when sidebar is open */
+        };
+    </script>
+</body>
+</html>

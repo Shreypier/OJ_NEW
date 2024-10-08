@@ -5,179 +5,284 @@
     <title>Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        .head1 {
-            font-size: 40px;
-            color: #009900;
-            font-weight: bold;
-        }
-
-        .head2 {
-            font-size: 17px;
-            margin-left: 10px;
-            margin-bottom: 15px;
-        }
-
         body {
-            margin: 0 auto;
-            background-position: center;
-            background-size: contain;
-            background-color: black;
-        }
-
-        .menu {
-            position: sticky;
-            left: 0;
-            background-color: #780909;
-            padding: 10px 0px 10px 0px;
-            color: #FCCB06;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        .menu a {
-            float: left;
+            margin: 0;
+            background-color: #202123;
             color: white;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            font-size: 20px;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        .menu-log {
-            right: auto;
-            float: right;
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+        .welcome {
+            font-size: 50px;
+            font-family: 'Cursive';
+            font-weight: bold;
+            color: #0db7ed; /* Updated color */
+        }
+
+        .user-button {
+            position: absolute;
+            right: 0;
+            background-color: #333;
+            color: #0db7ed; /* Updated color */
+            padding: 14px;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            border-radius: 50%; /* Makes the button circular */
+            width: 50px; /* Adjust size as needed */
+            height: 50px; /* Adjust size as needed */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-button span {
+            font-size: 20px; /* Adjust font size as needed */
+            margin: 0;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            right: 0;
+            top: 0;
+            background-color: #000;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+            color: white;
+        }
+
+        .sidebar-content {
+            padding: 8px;
+            text-align: center;
+        }
+
+        .close-sidebar {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+        }
+
+        .body-sec {
+            flex: 1;
+            margin: 40px auto;
+            width: 80%;
+            text-align: center;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .button-group button {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .announcement, .problems, .contests {
+            display: none;
+            padding: 20px;
+            background-color: #282b30;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .active {
+            display: block;
         }
 
         footer {
             width: 100%;
-            bottom: 0px;
             background-color: #000;
             color: #fff;
-            position: absolute;
             padding-top: 20px;
-            padding-bottom: 50px;
+            padding-bottom: 20px;
             text-align: center;
-            font-size: 30px;
-            font-weight: bold;
+            font-size: 20px;
+            position: relative;
+            bottom: 0;
         }
 
-        .body_sec {
-            margin-left: 100px;
-            margin-top: 40px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            justify-content: flex-start;
-            gap: 120px;
-            /* Add gap between cards */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .card {
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-            transition: 0.3s;
-            width: calc(60% - 20px);
-            /* Adjust width to fit with gap */
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        .filter-section {
             margin-bottom: 20px;
-            word-wrap: break-word;
         }
 
-        .container {
-            padding: 2px 16px;
-            display: inline-block;
-            max-width: 100%;
-            overflow: hidden;
+        .filter-section input, .filter-section select {
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
         }
 
-        .small-card {
-            width: calc(30% - 20px);
-            /* Smaller width for the User card */
-        }
-        .center {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            width: 50%;
-          }
-          body {
-            margin: 0;
-            background-color: #202020; /* Change this color to whatever you want */
-            color: #202020; /* Ensures text is visible on the darker background */
-        }
     </style>
-    
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="description" content="" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <link rel="icon" href="favicon.png">
 </head>
 
 <body>
-    
-    <!-- Menu Navigation Bar -->
-    <div class="menu">
-        <a href="/home/">HOME</a>
-        <a href="/home/problems/">PROBLEMS</a>
-        <a href="#test">COMPETE</a>
-        <a href="#rating">RATING</a>
-        <div class="menu-log">
+
+    <div class="header">
+        <div class="welcome">Welcome</div>
+        <button class="user-button" onclick="toggleSidebar()">
+            <span>{{ username }}</span> <!-- Show only the first character -->
+        </button>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="close-sidebar" onclick="toggleSidebar()">&times;</a>
+        <div class="sidebar-content">
+            <h3>User Details</h3>
+            <div class="user-info">
+                <p>Rating: 1000</p>
+                <p>Number of Problems: 2</p>
+                <p>Division: 4</p>
+            </div>
             <a href="/home/logout/">LOGOUT</a>
-            <font color="white"><h3>{{username}}</3></font>
         </div>
     </div>
-    <!-- Body section -->
-    <div class="body_sec">
-        <div class="card">
-            <div class="container">
-                <h4><b>Information</b></h4>
-                <p>CodeLANG is a web-based platform that allows users to practice programming and algorithm skills by submitting code to solve predefined problems. These platforms automatically evaluate the submitted code against a set of test cases and provide feedback on its correctness and efficiency. Here are some key features and aspects of CodeLANG:</p>
-                <ul>
-                    <li>Variety: Problems range from basic syntax exercises to complex algorithmic challenges.</li>
-                    <li>Categories: Problems are often categorized by difficulty level, topic (e.g., sorting, dynamic programming), or type (e.g., coding challenges, competitive programming problems).</li>
-                    <li>Submission and Evaluation:</li>
-                    <ul>
-                        <li>Code Submission: Users submit their solutions in various programming languages.</li>
-                        <li>Automated Testing: Submitted code is tested against multiple test cases to ensure correctness and performance.</li>
-                        <li>Feedback: Immediate feedback is provided, indicating whether the solution passed or failed the test cases and, in some cases, detailed error messages or performance metrics.</li>
-                    </ul>
-                </ul>
-            </div>
+
+    <!-- Body Section -->
+    <div class="body-sec">
+        <div class="button-group">
+            <button onclick="showSection('announcement')">Announcements</button>
+            <button onclick="showSection('problems')">Problems</button>
+            <button onclick="showSection('contests')">Contests</button>
         </div>
 
-        <div class="card small-card">
-            <div class="container">
-                <h4 style="text-align:center;"><b>User</b></h4>
-                <hr>
-                <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/128x128/plain/user.png" alt="Avatar" class="center">
-        
-               <pre>
-
-            Rating:1000 
-            Problems: 2
-            Div: 4
-            Number of Tasks: 6
-            Rated range: ~ 2799
-               </pre>
-                 
-            </div>
+        <div id="announcement" class="announcement active">
+            <p>No new announcements.</p>
         </div>
 
-        <div class="card">
-            <div class="container">
-                <h4><b>Contest Announcement</b></h4>
-                <p>We will hold 2 weekly Regular Contests.</p>
-                <ul>
-                    <li>Contest Date: 12/06/2024</li>
-                    <li>Start Time: 15:30 IST</li>
-                    <li>Duration: 120 minutes</li>
-                    <li>Number of Tasks: 6</li>
-                    <li>Rated range: ~ 2799</li>
-                    <li>Point values: 300-500-500-700-800-1000.</li>
-                </ul>
-                <p>We are looking forward to your participation!</p>
+        <div id="problems" class="problems">
+            <h2>Problems</h2>
+
+            <!-- Filter & Search Section -->
+            <div class="filter-section">
+                <input type="text" id="searchInput" onkeyup="searchProblems()" placeholder="Search for problems..." />
+                <select id="difficultyFilter" onchange="filterByDifficulty()">
+                    <option value="">All</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
             </div>
+
+            <table id="problemsTable">
+                <tr>
+                    <th>Index</th> <!-- You can change "Index" to any preferred word -->
+                    <th>Name</th>
+                    <th>Difficulty</th>
+                </tr>
+                {% for problem in all_problems %}
+                <tr>
+                    <td>{{ forloop.counter }}</td> <!-- Serial number -->
+                    <!-- Make the problem name clickable with a dynamic link -->
+                    <td><a href="/home/problem/id={{ problem.id }}/" style="text-decoration:none; color: white;">{{ problem.Name }}</a></td>
+                    <td>{{ problem.level }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">No problems available</td> <!-- In case no problems are present -->
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div id="contests" class="contests">
+            <p>Contest 1: Upcoming contest on 12/06/2024.</p>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; CodeLang 2024
+    </footer>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById("mySidebar");
+            if (sidebar.style.width === "250px") {
+                sidebar.style.width = "0";
+            } else {
+                sidebar.style.width = "250px";
+            }
+        }
+
+        function showSection(section) {
+            document.querySelectorAll('.announcement, .problems, .contests').forEach(function (el) {
+                el.classList.remove('active');
+            });
+            document.getElementById(section).classList.add('active');
+        }
+
+        // Search for problems by name
+        function searchProblems() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const table = document.getElementById('problemsTable');
+            const tr = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < tr.length; i++) { // Start from 1 to skip the header
+                const td = tr[i].getElementsByTagName('td')[1]; // Index 1 is for the problem name
+                if (td) {
+                    const textValue = td.textContent || td.innerText;
+                    tr[i].style.display = textValue.toLowerCase().indexOf(input) > -1 ? '' : 'none';
+                }
+            }
+        }
+
+        // Filter problems by difficulty
+        function filterByDifficulty() {
+            const selectedDifficulty = document.getElementById('difficultyFilter').value.toLowerCase();
+            const table = document.getElementById('problemsTable');
+            const tr = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < tr.length; i++) { // Start from 1 to skip the header
+                const td = tr[i].getElementsByTagName('td')[2]; // Index 2 is for the difficulty level
+                if (td) {
+                    const difficulty = td.textContent || td.innerText;
+                    tr[i].style.display = selectedDifficulty === '' || difficulty.toLowerCase() === selectedDifficulty ? '' : 'none';
+                }
+            }
+        }
+    </script>
+
 </body>
 
 </html>

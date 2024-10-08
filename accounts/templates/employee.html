@@ -5,18 +5,123 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Login</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .head1 {
+        font-size: 20px;
+        color: white;
+        font-weight: bold;
+        padding: 10px;
+    }
+
+    .head2 {
+        font-size: 17px;
+        margin-left: 10px;
+        margin-bottom: 15px;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Lato', sans-serif;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #0b0000;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('https://hdwallpaperim.com/wp-content/uploads/2017/09/17/60797-General.jpg');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        filter: blur(4px);
+        z-index: -1;
+        opacity: 1;
+    }
+
+    .menu {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: white;
+        padding: 10px;
+        border: 2px solid black;
+        z-index: 1000;
+    }
+
+    .menu-heading {
+        justify-content: flex-start;
+        margin-left: 10px;
+    }
+
+    .menu-log {
+        justify-content: flex-end;
+    }
+
+    .menu a {
+        color: black;
+        text-decoration: none;
+        font-size: 20px;
+        margin-left: 10px;
+    }
+
+    .menu .menu-log i {
+        font-size: 24px;
+        margin-right: 10px;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        z-index: 1000;
+    }
+
+    form {
+        width: 400px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    @media screen and (max-width: 768px) {
+        .menu a {
+            font-size: 18px;
+            padding: 10px;
+        }
+
+        form {
+            width: 80%;
+        }
+    }
+</style>
+ 
 </head>
-<body style="background-color:#0b0000;">
-	<div class="container mt-5">
-		
+<body>
+  <div class="menu">
+      <div class="menu-heading"><h2>CodeLANG</h2></div>
+      <div class="menu-log">
+       <h3> <i class="glyphicon glyphicon-user" style="color: black;"></i>
+        <a href="/accounts/login/">User</a></h3>
+    </div>
+  </div>s
+  
+	<div class="container">
 		<form method="post" enctype="multipart/form-data">
-			<h1 style="text-align: center;"><span style="color: #780909;">Codeclan</span></h1>
-
 			{% csrf_token %} 
-
+			<h2 style="text-align: center;"><span style="color: black;">Employee</span></h2>
 			<hr>
-
-			
 			{% if messages %}
 			<div class="alert alert-primary" role="alert">
 				{% for message in messages %}
@@ -24,42 +129,25 @@
 				{% endfor %}
 			</div>
 			{% endif %}
-
-			<form method='post'>
-              
-                <div data-mdb-input-init class="form-group">
-                    <label class="form-label" for="username"><font color ="white">Username</font></label>
-                  <input type="text" name="username" class="form-control" />
-                </div>
-                <div data-mdb-input-init class="form-group">
-                    <label class="form-label" for="employee_id"><font color="white">Employee id</font></label>
-                  <input type="text" name="employee_id" class="form-control" />
-                </div>
-              
-                <div data-mdb-input-init class="form-group">
-                    <label class="form-label" for="password"><font color="white">Password</font></label>
-                  <input type="password" name="password" class="form-control" />
-                </div>
-                
-                <div class="form-group">
-                  <div class="col d-flex justify-content-center">
-                   
-                    <div class="form-group">
-                      <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
-                      <label class="form-check-label" for="form2Example31"><font color="white"> Remember me </font></label>
-                    </div>
-                  </div>
-                </div>
-                  <div class="form-group">
-                   
-                    <a href="/accounts/register/"><font color="white">Forgot password?</font></a>
-                  </div>
-              
-              
-                <button  type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Sign in</button>
-              
-              </form>
+		
+            <div class="form-group">
+                <label class="form-label" for="employee_id"><font color="black">Employee ID</font></label>
+                <input type="text" name="employee_id" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password"><font color="black">Password</font></label>
+                <input type="password" name="password" class="form-control" />
+            </div>
+            <div class="form-group form-check">
+                <input class="form-check-input" type="checkbox" value="" id="rememberMe" checked />
+                <label class="form-check-label" for="rememberMe"><font color="black"> Remember me </font></label>
+            </div>
+            <div class="form-group">
+                <a href="/accounts/register/"><font color="black">Forgot password?</font></a>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
 		</form>
 	</div>
 </body>
 </html>
+

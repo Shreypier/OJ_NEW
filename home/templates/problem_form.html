@@ -1,64 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Login</title>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Problems</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0b0000;
+            margin: 0;
+            font-family: 'Lato', sans-serif;
+            transition: margin-left 0.5s;
+        }
+
+        .container {
+            margin-top: 100px; /* Adjusted for top bar */
+            position: relative;
+        }
+
+        #mySidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #780909;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        #mySidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 25px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+
+        #mySidebar a:hover {
+            color: black;
+            background-color: #ccc;
+        }
+
+        #main-content {
+            padding: 16px;
+            margin-left: 250px; /* Adjusted margin when sidebar is open */
+            transition: margin-left 0.5s;
+        }
+
+        #openbtn {
+            font-size: 20px;
+            cursor: pointer;
+            color: black;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+
+        #openbtn:hover {
+            color: black;
+        }
+
+        .top-bar {
+            width: 100%;
+            height: 60px;
+            background-color: #780909;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            border-bottom: 2px solid black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .top-bar #openbtn {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+
+        .logout-btn a {
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            background-color: #780909;
+            border: none;
+            cursor: pointer;
+        }
+
+        .logout-btn a:hover {
+            color: black;
+        }
+
+        .form-section {
+            display: none; /* Initially hide all forms */
+        }
+    </style>
 </head>
-<body style="background-color:#0b0000;">
-	<div class="container mt-5">
-		<!-- Login form -->
-		<form method="post" enctype="multipart/form-data">
-            <br>
-			<h2 style="text-align: center;"><span style="color: #780909;">Add Problem</span></h2>
+<body>
+    <div id="mySidebar">
+        <a href="#" onclick="showForm('createForm')">Create</a>
+        <a href="#" onclick="showForm('updateForm')">Update</a>
+        <a href="#" onclick="showForm('deleteForm')">Delete</a>
+    </div>
 
-			{% csrf_token %} <!-- CSRF token for security -->
+    <div class="top-bar">
+        <button id="openbtn" onclick="toggleSidebar()">☰</button>
+        <h1>CodeLANG</h1>
+        <div class="logout-btn">
+            <a href="/home/employee_logout/">Logout</a>
+        </div>
+    </div>
 
-			<hr>
-
-			<!-- Display error/success messages -->
-			{% if messages %}
-			<div class="alert alert-primary" role="alert">
-				{% for message in messages %}
-				{{ message }}
-				{% endfor %}
-			</div>
-			{% endif %}
-
-			<form>
-                <!-- Email input -->
-                <div data-mdb-input-init class="form-group">
-                    <label class="form-label" for="form2Example1"><font color ="white">Name</font></label>
-                  <input type="text" name="Name" class="form-control" />
+    <div id="main-content" class="container">
+        {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
                 </div>
-              
-                <!-- Password input -->
-                <div data-mdb-input-init class="form-group">
-                    <label class="form-label" for="form2Example2"><font color="white">level</font></label>
-                  <input type="text" name="level" class="form-control" />
+            {% elif message.tags == 'error' %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
                 </div>
-                <div data-mdb-input-init class="form-group">
-                    <label class="form-label" for="form2Example2"><font color="white">description</font></label>
-                  <input type="text" name="desc" class="form-control" />
-                </div> 
-                <div>
+            {% endif %}
+        {% endfor %}
+        {% endif %}
+
+        <div class="container mt-5">
+            <!-- Create Problem Form -->
+            <div id="createForm" class="form-section">
+                <h2><span style="color: #780909;">Add Problem</span></h2>
+                <form method="post" enctype="multipart/form-data" action="{% url 'manage_problem' %}">
+                    {% csrf_token %}
+                    <hr>
+
                     <div class="form-group">
-                        <div class="col d-flex justify-content-center">
-                        </div>
-                        <font color="white">Input_test:</font><br>
-                        <textarea  rows="5" cols="30" name="input_test" spellcheck="false"></textarea>
+                        <label class="form-label" for="formName"><font color="white">Name</font></label>
+                        <input type="text" name="Name" id="formName" class="form-control" required />
                     </div>
-                      <br>
-                      <div>
-                        <font color="white">Output_test:</font><br>
-                        <textarea rows="5" cols="30" name="output_test"></textarea>
-                      </div>
-                      <br>
-                      <button  type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">Create</button>
-                     
-              </form>
-		</form>
-	</div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="formLevel"><font color="white">Level</font></label>
+                        <input type="text" name="level" id="formLevel" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="formDesc"><font color="white">Description</font></label>
+                        <input type="text" name="desc" id="formDesc" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input_test"><font color="white">Input Test:</font></label><br>
+                        <textarea rows="5" cols="30" name="input_test" id="input_test" spellcheck="false" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="output_test"><font color="white">Output Test:</font></label><br>
+                        <textarea rows="5" cols="30" name="output_test" id="output_test" required></textarea>
+                    </div>
+
+                    <input type="hidden" name="action" value="create" />
+                    <button type="submit" class="btn btn-primary btn-block mb-4">Create</button>
+                </form>
+            </div>
+
+            <hr>
+
+            <!-- Update Problem Form -->
+            <div id="updateForm" class="form-section">
+                <h2><span style="color: #780909;">Update Problem</span></h2>
+                <form method="post" enctype="multipart/form-data" action="{% url 'manage_problem' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="updateProblemSelect"><font color="white">Select Problem to Update:</font></label>
+                        <select id="updateProblemSelect" name="update_id" class="form-control" required>
+                            <option value="">Select a problem</option>
+                            {% for problem in all_problems %}
+                            <option value="{{ problem.id }}">{{ problem.Name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="updateName"><font color="white">Name</font></label>
+                        <input type="text" name="Name" id="updateName" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="updateLevel"><font color="white">Level</font></label>
+                        <input type="text" name="level" id="updateLevel" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="updateDesc"><font color="white">Description</font></label>
+                        <input type="text" name="desc" id="updateDesc" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="updateInputTest"><font color="white">Input Test:</font></label><br>
+                        <textarea rows="5" cols="30" name="input_test" id="updateInputTest" spellcheck="false"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="updateOutputTest"><font color="white">Output Test:</font></label><br>
+                        <textarea rows="5" cols="30" name="output_test" id="updateOutputTest"></textarea>
+                    </div>
+
+                    <input type="hidden" name="action" value="update" />
+                    <button type="submit" class="btn btn-primary btn-block mb-4">Update</button>
+                </form>
+            </div>
+
+            <hr>
+
+            <!-- Delete Problem Form -->
+            <div id="deleteForm" class="form-section">
+                <h2><span style="color: #780909;">Delete Problem</span></h2>
+                <form method="post" enctype="multipart/form-data" action="{% url 'manage_problem' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="deleteProblemSelect"><font color="white">Select Problem to Delete:</font></label>
+                        <select id="deleteProblemSelect" name="delete_id" class="form-control" required>
+                            <option value="">Select a problem</option>
+                            {% for problem in all_problems %}
+                            <option value="{{ problem.id }}">{{ problem.Name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <input type="hidden" name="action" value="delete" />
+                    <button type="submit" class="btn btn-danger btn-block mb-4">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to toggle sidebar
+        function toggleSidebar() {
+            var sidebar = document.getElementById("mySidebar");
+            var mainContent = document.getElementById("main-content");
+            if (sidebar.style.width === "250px") {
+                sidebar.style.width = "0";
+                mainContent.style.marginLeft = "0";
+            } else {
+                sidebar.style.width = "250px";
+                mainContent.style.marginLeft = "250px";
+            }
+        }
+
+        // Function to show specific form and hide others
+        function showForm(formId) {
+            // Hide all forms
+            var forms = document.querySelectorAll('.form-section');
+            forms.forEach(function(form) {
+                form.style.display = 'none';
+            });
+
+            // Show the selected form
+            var selectedForm = document.getElementById(formId);
+            if (selectedForm) {
+                selectedForm.style.display = 'block';
+            }
+        }
+    </script>
 </body>
 </html>
+
+
+
