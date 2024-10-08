@@ -77,6 +77,10 @@ TEMPLATES = [
         },
     },
 ]
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.EmployeeAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 WSGI_APPLICATION = 'Online_Judge.wsgi.application'
 

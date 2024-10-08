@@ -48,7 +48,8 @@ def run_code(language,code,input):
     
     unique=str(uuid.uuid4())
     if(language=="python"):
-        code_file_name=f"{unique}.{"py"}"
+       code_file_name=f"{unique}.{'py'}"
+
     else :
         code_file_name=f"{unique}.{language}"
     
