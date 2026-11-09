@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,10 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+72y=+7b1lpigg=luxb&dg3k())ssnu8=qm#pzrl!v5j3f3*ik'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-+72y=+7b1lpigg=luxb&dg3k())ssnu8=qm#pzrl!v5j3f3*ik')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '1') == '1'
 
 ALLOWED_HOSTS = ['*']
 
@@ -77,10 +80,8 @@ TEMPLATES = [
         },
     },
 ]
-AUTHENTICATION_BACKENDS = [
-    'accounts.backends.EmployeeAuthBackend',
-    'django.contrib.auth.backends.ModelBackend',
-]
+LOGIN_URL = '/accounts/login/'
+
 
 WSGI_APPLICATION = 'Online_Judge.wsgi.application'
 
@@ -136,3 +137,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Judge limits (see Online_Compiler/judge.py)
+JUDGE_COMPILE_TIMEOUT = 15      # seconds
+JUDGE_TIME_LIMIT = 3            # seconds per test case
+JUDGE_MEMORY_LIMIT_MB = 256     # enforced on Linux only
+JUDGE_OUTPUT_LIMIT_BYTES = 1024 * 1024

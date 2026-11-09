@@ -119,6 +119,7 @@
         <a href="#" onclick="showForm('createForm')">Create</a>
         <a href="#" onclick="showForm('updateForm')">Update</a>
         <a href="#" onclick="showForm('deleteForm')">Delete</a>
+        <a href="#" onclick="showForm('casesForm')">Test cases</a>
     </div>
 
     <div class="top-bar">
@@ -214,16 +215,6 @@
                         <input type="text" name="desc" id="updateDesc" class="form-control" />
                     </div>
 
-                    <div class="form-group">
-                        <label for="updateInputTest"><font color="white">Input Test:</font></label><br>
-                        <textarea rows="5" cols="30" name="input_test" id="updateInputTest" spellcheck="false"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="updateOutputTest"><font color="white">Output Test:</font></label><br>
-                        <textarea rows="5" cols="30" name="output_test" id="updateOutputTest"></textarea>
-                    </div>
-
                     <input type="hidden" name="action" value="update" />
                     <button type="submit" class="btn btn-primary btn-block mb-4">Update</button>
                 </form>
@@ -249,6 +240,49 @@
                     <input type="hidden" name="action" value="delete" />
                     <button type="submit" class="btn btn-danger btn-block mb-4">Delete</button>
                 </form>
+            </div>
+            <hr>
+
+            <!-- Test cases -->
+            <div id="casesForm" class="form-section">
+                <h2><span style="color: #780909;">Test Cases</span></h2>
+                <form method="post" action="{% url 'manage_problem' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="caseProblem"><font color="white">Problem:</font></label>
+                        <select id="caseProblem" name="problem_id" class="form-control" required>
+                            {% for problem in all_problems %}<option value="{{ problem.id }}">{{ problem.Name }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="caseInput"><font color="white">Input:</font></label><br>
+                        <textarea rows="4" cols="30" name="input_data" id="caseInput" spellcheck="false"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="caseOutput"><font color="white">Expected output:</font></label><br>
+                        <textarea rows="4" cols="30" name="expected_output" id="caseOutput" required></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="is_sample" id="caseSample" class="form-check-input" />
+                        <label for="caseSample" class="form-check-label"><font color="white">Sample (visible to users)</font></label>
+                    </div>
+                    <input type="hidden" name="action" value="add_case" />
+                    <button type="submit" class="btn btn-primary mb-4">Add test case</button>
+                </form>
+
+                {% for problem in all_problems %}
+                <h5><font color="white">{{ problem.Name }}</font></h5>
+                {% for case in problem.test_cases.all %}
+                <form method="post" action="{% url 'manage_problem' %}" class="mb-2">
+                    {% csrf_token %}
+                    <font color="white">Case {{ forloop.counter }} ({% if case.is_sample %}sample{% else %}hidden{% endif %}): <code>{{ case.input_data|truncatechars:40 }}</code> &rarr; <code>{{ case.expected_output|truncatechars:40 }}</code></font>
+                    <input type="hidden" name="action" value="delete_case" />
+                    <input type="hidden" name="case_id" value="{{ case.id }}" />
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+                {% empty %}<p><font color="white">No test cases yet.</font></p>
+                {% endfor %}
+                {% endfor %}
             </div>
         </div>
     </div>

@@ -1,176 +1,63 @@
-from django.shortcuts import render
-from Online_Compiler.models import User_Input
-from home.models import problem
-from django.http import HttpResponse
-from django.template import loader
 from django.contrib import messages
-from pathlib import Path
-from django.conf import settings
-import uuid
-import subprocess
-import re
-# Create your views here.
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
+
+from Online_Compiler import judge
+from Online_Compiler.models import Submission
+from home.models import problem
+
+MAX_CODE_LENGTH = 100_000
 
 
-def problem_page(request):
-    if request.method=='POST':
-         language=request.POST['language']
-         code=request.POST['code']
-         input_data=request.POST['input']
-         output_data=run_code(language,code,input_data)
-         new=User_Input(language=language, code=code, input_data=input_data,output_data=output_data) 
-         new.save()
-         sub=new 
-         context={
-             'sub':sub
-        }
-         return render(request,'/problem/',context)
-    
-    else:
-        
-        template=loader.get_template("detail.html")
-        context={}
-        return HttpResponse(template.render(context,request))
-    
-def run_code(language,code,input):
-    project_path=Path(settings.BASE_DIR)
-    
-    directories =["codes","inputs","outputs"]
-    
-    for directory in directories:
-        dir_path=project_path/directory
-        if not dir_path.exists():
-            dir_path.mkdir(parents=True,exist_ok=True)
-            
-    codes_dir=project_path/ "codes"
-    inputs_dir=project_path/ "inputs"
-    outputs_dir=project_path/ "outputs"
-    
-    unique=str(uuid.uuid4())
-    if(language=="python"):
-       code_file_name=f"{unique}.{'py'}"
+def _clean_language(value):
+    return value if value in judge.LANGUAGES else None
 
-    else :
-        code_file_name=f"{unique}.{language}"
-    
-    input_file_name=f'{unique}.txt'
-    output_file_name=f'{unique}.txt'
-    
-    code_file_path=codes_dir/code_file_name
-    input_file_path=inputs_dir/input_file_name
-    output_file_path=outputs_dir/output_file_name
-    
-    with open(code_file_path,'w') as code_file:
-        code_file.write(code)
-        
-    with open(input_file_path,'w') as input_file:
-        input_file.write(input)
-    
-    with open(output_file_path,'w') as output_file:
-        pass
-    
-    if language =="c++":
-        executable_path=codes_dir/unique
-        
-        compiler_result=subprocess.run(
-          ["g++",str(code_file_path),"-o",str(executable_path)]  
-        )
-        
-        if compiler_result.returncode==0:
-            with open(input_file_path,'r') as input_file:
-                with open(output_file_path,'w') as output_file:
-                    subprocess.run(
-                       [str(executable_path)], 
-                       stdin=input_file,
-                       stdout=output_file,
-                    )
-    if language=="python":
-           with open(input_file_path,'r') as input_file:
-                with open(output_file_path,'w') as output_file:
-                    subprocess.run(
-                       ["python3 ",str(code_file_path)], 
-                       stdin=input_file,
-                       stdout=output_file,
-                    )
-                    
-    if language =="c":
-        executable_path=codes_dir/unique
-        
-        compiler_result=subprocess.run(
-          ["gcc",str(code_file_path),"-o",str(executable_path)]  
-        )
-        
-        if compiler_result.returncode==0:
-            with open(input_file_path,'r') as input_file:
-                with open(output_file_path,'w') as output_file:
-                    subprocess.run(
-                       [str(executable_path)], 
-                       stdin=input_file,
-                       stdout=output_file,
-                    )
-    
-    with open(output_file_path,'r') as output_file:
-        output_data=output_file.read()
-     
-    return output_data
 
-def submit_page(request,id):
-    
-    object=problem.objects.get(id=id)
-    input_test=object.input_test
-    output_test=object.output_test
-    project_path=Path(settings.BASE_DIR)
-    
-    directoriess =["test_outputs","user_outputs"]
-    
-    for directory in directoriess:
-        dir_path=project_path/directory
-        if not dir_path.exists():
-            dir_path.mkdir(parents=True,exist_ok=True)
-            
-    test_dir=project_path/ "test_outputs"
-    userO_dir=project_path/"user_outputs"
-    
-    unique=str(uuid.uuid4())
-    
-    output_test_file_name=f'{unique}.txt'
-    user_output_file_name=f'{unique}.txt'
-    output_test_path=test_dir/output_test_file_name
-    user_output_path=userO_dir/user_output_file_name
-    language=request.POST['language']
-    code=request.POST['code']
-    output_data=run_code(language,code,input_test)
-    with open(user_output_path,"w",newline='\n') as output_file:
-        output_file.write(output_data)
-        
-    with open(output_test_path,"w",newline='\n') as output_file:
-        output_file.write(output_test)  
-      
-    text1 = re.sub(r'\s+', ' ',output_data).strip()
-    text2 = re.sub(r'\s+', ' ',output_test).strip()  
-    language=request.POST['language']
-    code=request.POST['code']
-    input_data=request.POST['input']
-    output_data=run_code(language,code,input_data)
-    new=User_Input(language=language, code=code, input_data=input_data,output_data=output_data) 
-    new.save()
-    sub=new 
-         
-  
-    
-    if text1==text2:
-            messages.success(request,"Submission successful")
-            template=loader.get_template('submit.html')
-            context={
-                'sub':sub
-            }
-            return HttpResponse(template.render(context,request))
-    else:
-            messages.error(request,'wrong answer')
-            template=loader.get_template('submit.html')
-            context={
-                'sub':sub
-            }
-            return HttpResponse(template.render(context,request))
+@login_required
+@require_POST
+def submit_page(request, id):
+    """Judge the submitted code against all of the problem's test cases."""
+    prob = get_object_or_404(problem, id=id)
+    language = _clean_language(request.POST.get("language"))
+    code = request.POST.get("code", "")
+    if language is None or not code.strip():
+        messages.error(request, "Choose a language and write some code before submitting.")
+        return redirect("problem-details", id=prob.id)
+    if len(code) > MAX_CODE_LENGTH:
+        messages.error(request, "Code is too long.")
+        return redirect("problem-details", id=prob.id)
 
- 
+    result = judge.judge(language, code, prob.test_cases.all())
+    sub = Submission.objects.create(
+        user=request.user, problem=prob, language=language, code=code,
+        verdict=result.verdict, message=result.message, time_ms=result.time_ms,
+        passed=result.passed, total=result.total,
+    )
+    # Per-case details are only needed for this response, so keep them in the session.
+    request.session[f"cases_{sub.id}"] = [vars(c) for c in result.cases]
+    return redirect("submission-detail", sub_id=sub.id)
+
+
+@login_required
+def submission_detail(request, sub_id):
+    sub = get_object_or_404(Submission, id=sub_id)
+    if sub.user_id != request.user.id and not request.user.is_staff:
+        messages.error(request, "You can only view your own submissions.")
+        return redirect("submission-list")
+    cases = request.session.pop(f"cases_{sub.id}", [])
+    return render(request, "submit.html", {
+        "sub": sub, "cases": cases, "accepted": sub.verdict == judge.AC,
+    })
+
+
+@login_required
+def submission_list(request):
+    subs = Submission.objects.filter(user=request.user).select_related("problem")
+    prob = None
+    problem_id = request.GET.get("problem")
+    if problem_id and problem_id.isdigit():
+        prob = problem.objects.filter(id=problem_id).first()
+        if prob:
+            subs = subs.filter(problem=prob)
+    return render(request, "submissions.html", {"subs": subs[:200], "prob": prob})

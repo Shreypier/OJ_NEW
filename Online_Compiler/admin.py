@@ -1,4 +1,4 @@
 from django.contrib import admin
-from Online_Compiler.models import User_Input
+from Online_Compiler.models import Submission
 
-admin.site.register(User_Input)
+admin.site.register(Submission)

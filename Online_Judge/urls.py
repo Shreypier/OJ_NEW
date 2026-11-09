@@ -24,7 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/',include("accounts.urls")),
     path('home/',include("home.urls")),
-    path('execute/',include("Online_Compiler.urls")),
     path('',first,name='first-page'),
 ]
 if settings.DEBUG:

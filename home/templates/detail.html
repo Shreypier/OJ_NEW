@@ -242,7 +242,7 @@
     <div class="head">Difficulty: {{detail.level}}</div>
     <div class="navigation-links">
       <a href="#">Code</a>
-      <a href="#">Submissions</a>
+      <a href="{% url 'submission-list' %}?problem={{ detail.id }}">Submissions</a>
     </div>
   </div>
     <div class="split left">
@@ -302,13 +302,12 @@
     <div class="split right">
         <div class="top">
           <h2><font color="white"><align="center">Code compiler</align></font></h2>
+            {% for message in messages %}<div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %}">{{ message }}</div>{% endfor %}
             <form action="?" method="post">{% csrf_token %}
               <div>
               <label for="language"><font color="white">Choose a language:</font></label>
               <select name="language" id="language">
-                <option value="python">python</option>
-                <option value="c">c</option>
-                <option value="c++">c++</option>
+                {% for lang in languages %}<option value="{{ lang }}" {% if sub.language == lang %}selected{% endif %}>{{ lang }}</option>{% endfor %}
               </select>
             </div>
               <br><br>  
@@ -328,7 +327,7 @@
               </div>
           
               <div>
-                <div class="code-header">Output</div>
+                <div class="code-header">Output {% if sub.verdict %}<span>({{ sub.verdict }}, {{ sub.time_ms }} ms)</span>{% endif %}</div>
                    <textarea rows="5" cols="20" readonly>{{sub.output_data}}</textarea>
               </div>
             

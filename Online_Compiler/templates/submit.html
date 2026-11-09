@@ -1,76 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #FFE5B4;
-        }
-        .result-container {
-            background-color: #000000;
-            color: #FFFFFF;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            margin-bottom: 80px; /* Added margin to the bottom */
-        }
-        .alert {
-            margin-top: 20px;
-        }
-        .code-container {
-            background-color: #2C2C2C;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .code-container pre {
-            color: #FFFFFF;
-        }
-        .run-another-code-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-    </style>
-</head>
-<body>
-    <div class="container mt-5">
-        <!-- Display error/success messages -->
-        {% if messages %}
-            {% for message in messages %}
-                {% if message.tags == 'success' %}
-                    <div class="alert alert-success" role="alert">
-                        {{ message }}
-                    </div>
-                {% elif message.tags == 'error' %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ message }}
-                    </div>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
+{% extends "base.html" %}
+{% block title %}Submission #{{ sub.id }}{% endblock %}
+{% block content %}
+<h3>{{ sub.problem.Name }}</h3>
+<div class="alert {% if accepted %}alert-success{% else %}alert-danger{% endif %} d-flex justify-content-between">
+  <strong class="verdict">{{ sub.verdict_label }}</strong>
+  <span>{{ sub.passed }}/{{ sub.total }} test cases passed &middot; {{ sub.time_ms }} ms &middot; {{ sub.language }}</span>
+</div>
+{% if sub.message %}<pre class="bg-black p-3 rounded">{{ sub.message }}</pre>{% endif %}
 
-        <!-- Result container -->
-        {% if sub %}
-        <div class="result-container">
-            <p><strong>Language :</strong> {{ sub.language }}</p>
-            <div class="code-container">
-                <p><strong>Code :</strong></p>
-                <pre>{{ sub.code }}</pre>
-            </div>
-        </div>
-        {% endif %}
-    </div>
+{% if cases %}
+<h5 class="mt-4">Test cases</h5>
+<ul class="list-group mb-4">
+  {% for c in cases %}
+  <li class="list-group-item bg-secondary-subtle text-dark">
+    <strong>Case {{ c.index }}{% if c.is_sample %} (sample){% else %} (hidden){% endif %}:</strong> {{ c.verdict }} &middot; {{ c.time_ms }} ms
+    {% if c.is_sample %}
+      <pre class="mb-1">Input: {{ c.input_data }}</pre>
+      <pre class="mb-1">Expected: {{ c.expected }}</pre>
+      <pre class="mb-0">Yours: {{ c.actual }}</pre>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
 
-    <!-- Run another code button -->
-    <button class="btn btn-primary run-another-code-btn" onclick="window.history.back();">Run another code</button>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
-          
+<h5>Your code</h5>
+<pre class="bg-black p-3 rounded">{{ sub.code }}</pre>
+<a class="btn btn-primary" href="{% url 'problem-details' sub.problem.id %}">Back to problem</a>
+<a class="btn btn-outline-light" href="{% url 'submission-list' %}?problem={{ sub.problem.id }}">History for this problem</a>
+{% endblock %}

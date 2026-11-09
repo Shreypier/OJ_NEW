@@ -2,7 +2,6 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.contrib.auth import login,authenticate
 from django.contrib.auth.models import User
-from accounts.backends import EmployeeAuthBackend
 from django.contrib import messages
 from django.template import loader
 
@@ -58,23 +57,16 @@ def login_user(request):
     return HttpResponse(template.render(context,request))
 
 def login_employee(request):
+    """Employees are regular Django users with is_staff=True."""
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('/home/employee/')
     if request.method == 'POST':
-        employee_id = request.POST['employee_id']
-        password = request.POST['password']
-        backend = EmployeeAuthBackend()
-        employee = backend.authenticate( employee_id, password)
-        if employee:
-            login(request, backend.get_user(employee_id))
-            return redirect('/home/employee/')  # Redirect to employee dashboard
-        else:
-                 # Login failed, show error message
-            messages.info(request,'')
-            return redirect ('/home/employee/')
-    else:
-          template=loader.get_template('employee.html')
-          context={}
-          return HttpResponse(template.render(context,request))
-
-        
-       
-      
+        employee_id = request.POST.get('employee_id', '').strip()
+        password = request.POST.get('password', '')
+        user = authenticate(request, username=employee_id, password=password)
+        if user is not None and user.is_staff:
+            login(request, user)
+            return redirect('/home/employee/')
+        messages.info(request, 'Invalid employee ID or password')
+        return redirect('/accounts/employee_login/')
+    return render(request, 'employee.html')
