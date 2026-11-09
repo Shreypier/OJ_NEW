@@ -2,8 +2,8 @@
 {% block title %}Submission #{{ sub.id }} - CodeLANG{% endblock %}
 {% block content %}
 <main class="page">
-  <div class="row between" style="margin-bottom:14px">
-    <h1 style="margin:0">{{ sub.problem.Name }} <span class="muted">#{{ sub.id }}</span></h1>
+  <div class="page-head">
+    <div><h1>{{ sub.problem.Name }}</h1><div class="muted">Submission #{{ sub.id }}</div></div>
     <div class="row">
       <a class="btn" href="{% url 'submission-list' %}?problem={{ sub.problem.id }}">History</a>
       <a class="btn primary" href="{% url 'problem-details' sub.problem.id %}">Back to problem</a>
@@ -11,7 +11,7 @@
   </div>
 
   <div class="verdict {{ sub.verdict }}">
-    <div class="icon">{% if accepted %}✅{% else %}❌{% endif %}</div>
+    <div class="vi">{% if accepted %}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>{% elif sub.verdict == "TLE" or sub.verdict == "SE" %}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{% else %}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>{% endif %}</div>
     <div><div class="big">{{ sub.verdict_label }}</div>
       <div class="muted">{{ sub.passed }}/{{ sub.total }} test cases &middot; {{ sub.time_ms }} ms &middot; {{ sub.language }} &middot; {{ sub.created|date:"M j, H:i" }}</div></div>
   </div>
@@ -21,21 +21,21 @@
   <div class="case-pills">{% for c in cases %}<div class="case-pill {% if c.verdict == 'AC' %}AC{% else %}bad{% endif %}" style="animation-delay:{{ forloop.counter0 }}00ms" title="{{ c.verdict }}">{{ c.index }}</div>{% endfor %}</div>
   {% for c in cases %}{% if c.is_sample %}
   <div class="card" style="margin-bottom:12px">
-    <b>Case {{ c.index }} (sample)</b> <span class="badge {{ c.verdict }}">{{ c.verdict }}</span> <span class="muted">{{ c.time_ms }} ms</span>
+    <div class="row" style="margin-bottom:8px"><b>Case {{ c.index }} (sample)</b> <span class="badge {{ c.verdict }}">{{ c.verdict }}</span> <span class="muted">{{ c.time_ms }} ms</span></div>
     <div class="example"><div class="box"><b>Input</b><pre>{{ c.input_data }}</pre></div><div class="box"><b>Expected</b><pre>{{ c.expected }}</pre></div></div>
-    <div class="box"><b class="muted">Your output</b><pre>{{ c.actual }}</pre></div>
+    <div class="box"><b>Your output</b><pre>{{ c.actual }}</pre></div>
   </div>
   {% endif %}{% endfor %}
   {% endif %}
 
-  <h3>Your code</h3>
+  <div class="code-block-head"><h3>Your code</h3><span class="badge">{{ sub.language }}</span></div>
   <pre>{{ sub.code }}</pre>
 </main>
 {% endblock %}
 {% block scripts %}{% if accepted and cases %}
 <script>
   (function () {
-    var colors = ["#7c5cff", "#22d3ee", "#34d399", "#fbbf24", "#f87171"];
+    var colors = ["#6d7dff", "#38bdf8", "#3ecf8e", "#f5b546", "#f4717f"];
     for (var i = 0; i < 60; i++) {
       var c = document.createElement("i"); c.className = "confetti";
       c.style.left = Math.random() * 100 + "vw"; c.style.background = colors[i % 5];

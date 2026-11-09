@@ -1,15 +1,13 @@
-{% extends "base.html" %}
-{% block title %}Register - CodeLANG{% endblock %}
-{% block content %}
-<div class="auth-wrap">
-  <form class="card auth-card" method="post">
-    {% csrf_token %}
-    <h2>Create your account</h2>
-    <p class="sub">Free, takes ten seconds</p>
-    <div class="field"><label for="username">Username</label><input type="text" id="username" name="username" autocomplete="username" autofocus required></div>
-    <div class="field"><label for="password">Password</label><input type="password" id="password" name="password" autocomplete="new-password" required></div>
-    <button type="submit" class="btn primary block">Register</button>
-    <p class="auth-alt">Already registered? <a href="/accounts/login/">Sign in</a></p>
-  </form>
-</div>
+{% extends "auth_base.html" %}
+{% block title %}Sign up - CodeLANG{% endblock %}
+{% block aside_title %}Start practising in under a minute.{% endblock %}
+{% block aside_text %}Create a free account to save every submission and track the problems you have solved.{% endblock %}
+{% block form_content %}
+<h2>Create your account</h2>
+<p class="sub">Free, and it only takes a moment.</p>
+<div class="field"><label for="username">Username</label><input type="text" id="username" name="username" placeholder="Choose a username" autocomplete="username" autofocus required></div>
+<div class="field"><label for="password">Password</label>
+  <div class="input-wrap"><input type="password" id="password" name="password" placeholder="Choose a password" autocomplete="new-password" required><button type="button" class="reveal" data-reveal="password">Show</button></div></div>
+<button type="submit" class="btn primary lg block">Create account</button>
+<div class="auth-alt"><span>Already have an account? <a href="/accounts/login/">Log in</a></span></div>
 {% endblock %}

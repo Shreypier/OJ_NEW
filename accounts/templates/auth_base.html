@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% comment %}Shared two-column layout for every sign-in / sign-up page.{% endcomment %}
+{% block content %}
+<div class="auth-split">
+  <aside class="auth-aside">
+    <h2>{% block aside_title %}Solve. Submit. Get judged in seconds.{% endblock %}</h2>
+    <p>{% block aside_text %}Practice with real test cases and see exactly where your solution passes or fails.{% endblock %}</p>
+    <ul class="points">
+      <li><span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Python, C and C++ with a full editor</li>
+      <li><span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Hidden test cases and clear verdicts</li>
+      <li><span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Every run isolated in its own sandbox</li>
+    </ul>
+    <div class="code-window" aria-hidden="true">
+      <div class="cw-bar"><i></i><i></i><i></i><span>solution.py</span></div>
+<div class="cw-body"><span class="k">def</span> <span class="f">solve</span>(nums, target):
+    seen = {}
+    <span class="k">for</span> i, x <span class="k">in</span> <span class="f">enumerate</span>(nums):
+        <span class="k">if</span> target - x <span class="k">in</span> seen:
+            <span class="k">return</span> <span class="s">"YES"</span>
+        seen[x] = i
+    <span class="k">return</span> <span class="s">"NO"</span></div>
+    </div>
+  </aside>
+
+  <main class="auth-main">
+    <form class="auth-card" method="post" novalidate>
+      {% csrf_token %}
+      {% block form_content %}{% endblock %}
+    </form>
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  /* show / hide password */
+  document.querySelectorAll("[data-reveal]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var i = document.getElementById(b.dataset.reveal), show = i.type === "password";
+      i.type = show ? "text" : "password"; b.textContent = show ? "Hide" : "Show";
+    });
+  });
+</script>
+{% endblock %}

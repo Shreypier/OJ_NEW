@@ -1,15 +1,14 @@
-{% extends "base.html" %}
-{% block title %}Login - CodeLANG{% endblock %}
-{% block content %}
-<div class="auth-wrap">
-  <form class="card auth-card" method="post">
-    {% csrf_token %}
-    <h2>Welcome back</h2>
-    <p class="sub">Sign in to keep solving</p>
-    <div class="field"><label for="username">Username</label><input type="text" id="username" name="username" autocomplete="username" autofocus required></div>
-    <div class="field"><label for="password">Password</label><input type="password" id="password" name="password" autocomplete="current-password" required></div>
-    <button type="submit" class="btn primary block">Sign in</button>
-    <p class="auth-alt">New here? <a href="/accounts/register/">Create an account</a><br><a href="/accounts/employee_login/">Employee login</a></p>
-  </form>
+{% extends "auth_base.html" %}
+{% block title %}Log in - CodeLANG{% endblock %}
+{% block form_content %}
+<h2>Welcome back</h2>
+<p class="sub">Log in to pick up where you left off.</p>
+<div class="field"><label for="username">Username</label><input type="text" id="username" name="username" placeholder="your_username" autocomplete="username" autofocus required></div>
+<div class="field"><label for="password">Password</label>
+  <div class="input-wrap"><input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required><button type="button" class="reveal" data-reveal="password">Show</button></div></div>
+<button type="submit" class="btn primary lg block">Log in</button>
+<div class="auth-alt">
+  <span>New to CodeLANG? <a href="/accounts/register/">Create an account</a></span>
+  <span>Part of the team? <a href="/accounts/employee_login/">Employee login</a></span>
 </div>
 {% endblock %}

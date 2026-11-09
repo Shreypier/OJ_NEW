@@ -2,36 +2,45 @@
 {% block title %}Problems - CodeLANG{% endblock %}
 {% block content %}
 <main class="page">
-  <div class="row between" style="margin-bottom:20px">
-    <div><h1 style="margin:0">Hi, {{ username }} 👋</h1><div class="muted">Pick a problem and start coding.</div></div>
+  <div class="page-head">
+    <div><h1>Welcome back, {{ username }}</h1><div class="muted">Pick a problem and keep your streak going.</div></div>
   </div>
 
-  <section class="grid stats" style="margin-bottom:28px">
+  <section class="grid stats" style="margin-bottom:24px">
     <div class="card stat">
-      <div class="num">{{ solved_count }}<span class="muted" style="font-size:18px"> / {{ total_problems }}</span></div>
-      <div class="lbl">Problems solved</div>
-      <div class="progress"><i style="width:{% if total_problems %}{% widthratio solved_count total_problems 100 %}{% else %}0{% endif %}%"></i></div>
+      <div class="ring" style="--p:{% if total_problems %}{% widthratio solved_count total_problems 100 %}{% else %}0{% endif %}"><span>{% if total_problems %}{% widthratio solved_count total_problems 100 %}{% else %}0{% endif %}%</span></div>
+      <div><div class="num">{{ solved_count }}<span class="muted" style="font-size:16px;font-weight:500"> / {{ total_problems }}</span></div><div class="lbl">Problems solved</div></div>
     </div>
-    <div class="card stat"><div class="num">{{ total_subs }}</div><div class="lbl">Submissions</div></div>
-    <div class="card stat"><div class="num">{% if total_subs %}{% widthratio accepted_subs total_subs 100 %}%{% else %}-{% endif %}</div><div class="lbl">Acceptance rate</div></div>
+    <div class="card stat">
+      <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0-12 4 4m-4-4L8 7"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg></div>
+      <div><div class="num">{{ total_subs }}</div><div class="lbl">Submissions</div></div>
+    </div>
+    <div class="card stat">
+      <div class="ico green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg></div>
+      <div><div class="num">{% if total_subs %}{% widthratio accepted_subs total_subs 100 %}%{% else %}&ndash;{% endif %}</div><div class="lbl">Acceptance rate</div></div>
+    </div>
   </section>
 
   <section class="card">
     <div class="toolbar">
-      <input type="search" id="search" placeholder="Search problems...  (press / to focus)">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="search" placeholder="Search problems" aria-label="Search problems">
+      </div>
       <div class="pills" id="levels">
         <button class="pill on" data-level="">All</button>
         <button class="pill" data-level="easy">Easy</button>
         <button class="pill" data-level="medium">Medium</button>
         <button class="pill" data-level="hard">Hard</button>
       </div>
+      <span class="kbd" title="Press / to search">/</span>
     </div>
     <table class="table" id="problems">
-      <thead><tr><th style="width:44px"></th><th>#</th><th>Title</th><th>Difficulty</th></tr></thead>
+      <thead><tr><th style="width:44px">Status</th><th style="width:50px">#</th><th>Title</th><th>Difficulty</th></tr></thead>
       <tbody>
       {% for p in all_problems %}
         <tr data-name="{{ p.Name|lower }}" data-level="{{ p.level_class }}">
-          <td><span class="status-dot {{ p.status }}" title="{{ p.status }}"></span></td>
+          <td><span class="status-dot {{ p.status }}" title="{{ p.status|default:'not attempted' }}"></span></td>
           <td class="muted">{{ forloop.counter }}</td>
           <td><a class="title" href="{% url 'problem-details' p.id %}">{{ p.Name }}</a></td>
           <td><span class="badge {{ p.level_class }}">{{ p.level|title }}</span></td>
@@ -46,7 +55,7 @@
 
   {% if recent %}
   <section class="card" style="margin-top:24px">
-    <div class="row between"><h3 style="margin:0">Recent submissions</h3><a href="{% url 'submission-list' %}">View all</a></div>
+    <div class="section-title"><h3>Recent submissions</h3><a href="{% url 'submission-list' %}">View all &rarr;</a></div>
     <table class="table">
       <tbody>
       {% for s in recent %}

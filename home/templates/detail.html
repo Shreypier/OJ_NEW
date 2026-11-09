@@ -3,13 +3,14 @@
 {% block body_class %}ws-body{% endblock %}
 {% block nav %}
 <header class="ws-top">
-  <a class="brand" href="/">Code<span>LANG</span></a>
-  <a class="btn sm" href="{% url 'home-start' %}">&larr; Problems</a>
+  <a class="brand" href="/">{% include "_logo.html" %}</a>
+  <a class="crumb" href="{% url 'home-start' %}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Problems</a>
+  <span class="sep">/</span>
   <h1>{{ detail.Name }}</h1>
   <span class="badge {{ detail.level_class }}">{{ detail.level|title }}</span>
   <div class="nav-spacer"></div>
-  <span class="muted" style="font-size:13px"><span class="kbd">Ctrl</span>+<span class="kbd">Enter</span> run &nbsp; <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">Enter</span> submit</span>
-  <div class="avatar">{{ user.username|slice:":1" }}</div>
+  {% include "_theme_toggle.html" %}
+  <div class="avatar" title="{{ user.username }}">{{ user.username|slice:":1" }}</div>
 </header>
 {% endblock %}
 
@@ -23,22 +24,23 @@
     </div>
     <div class="tab-body prose" id="left-desc">
       <h2>{{ detail.Name }}</h2>
+      <div class="meta"><span class="badge {{ detail.level_class }}">{{ detail.level|title }}</span></div>
       <p>{{ detail.desc }}</p>
       {% if detail.input_constraints %}<h3>Input</h3><pre>{{ detail.input_constraints }}</pre>{% endif %}
       {% if detail.output_constraints %}<h3>Output</h3><pre>{{ detail.output_constraints }}</pre>{% endif %}
       {% if detail.constraint %}<h3>Constraints</h3><pre>{{ detail.constraint }}</pre>{% endif %}
       {% if detail.examples or detail.output_const %}
       <h3>Example</h3>
-      <div class="example">
-        <div class="box"><b>Input</b><button class="btn sm copy" data-copy="ex-in">Copy</button><pre id="ex-in">{{ detail.examples }}</pre></div>
-        <div class="box"><b>Output</b><button class="btn sm copy" data-copy="ex-out">Copy</button><pre id="ex-out">{{ detail.output_const }}</pre></div>
+      <div class="sample">
+        <div class="box"><div class="box-head">Input<button class="btn copy" data-copy="ex-in">Copy</button></div><pre id="ex-in">{{ detail.examples }}</pre></div>
+        <div class="box"><div class="box-head">Output</div><pre id="ex-out">{{ detail.output_const }}</pre></div>
       </div>
       {% endif %}
       {% for c in sample_cases %}
       <h3>Sample test {{ forloop.counter }}</h3>
-      <div class="example">
-        <div class="box"><b>Input</b><button class="btn sm copy" data-copy="s{{ forloop.counter }}-in">Copy</button><pre id="s{{ forloop.counter }}-in">{{ c.input_data }}</pre></div>
-        <div class="box"><b>Expected output</b><pre>{{ c.expected_output }}</pre></div>
+      <div class="sample">
+        <div class="box"><div class="box-head">Input<button class="btn copy" data-copy="s{{ forloop.counter }}-in">Copy</button></div><pre id="s{{ forloop.counter }}-in">{{ c.input_data }}</pre></div>
+        <div class="box"><div class="box-head">Expected output</div><pre>{{ c.expected_output }}</pre></div>
       </div>
       {% endfor %}
     </div>
@@ -56,38 +58,36 @@
     </div>
   </section>
 
-  <div class="divider" id="divider"></div>
+  <div class="divider" id="divider" title="Drag to resize"></div>
 
   <!-- RIGHT: editor + console -->
   <section class="pane">
     <form id="form" method="post" style="display:contents">
       {% csrf_token %}
       <div class="editor-bar">
-        <select name="language" id="language">
+        <select name="language" id="language" aria-label="Language">
           {% for lang in languages %}<option value="{{ lang }}" {% if sub.language == lang %}selected{% endif %}>{{ lang }}</option>{% endfor %}
         </select>
-        <button type="button" class="btn sm" id="reset">Reset</button>
+        <button type="button" class="btn sm ghost" id="reset" title="Reset to starter code">Reset</button>
         <div class="nav-spacer"></div>
-        <span class="muted" id="saved" style="font-size:12px"></span>
+        <span class="status" id="status"></span>
+        <span class="saved" id="saved"></span>
+        <button type="button" class="btn sm" id="run" title="Run with custom input (Ctrl + Enter)"><span class="spinner"></span><svg class="ico-play" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>Run</button>
+        <button type="button" class="btn sm primary" id="submit" title="Submit for judging (Ctrl + Shift + Enter)"><span class="spinner"></span>Submit</button>
       </div>
       <div id="editor"></div>
       <textarea name="code" id="code-fallback" spellcheck="false" placeholder="Write your code here...">{{ sub.code }}</textarea>
 
       <div class="console">
         <div class="tabs" data-group="console">
-          <button type="button" class="tab on" data-tab="input">Custom input</button>
+          <button type="button" class="tab on" data-tab="input">Test input</button>
           <button type="button" class="tab" data-tab="output">Output</button>
-          <button type="button" class="tab" data-tab="result">Result</button>
+          <button type="button" class="tab" data-tab="result">Verdict</button>
+          <span class="hint"><span class="kbd">Ctrl</span> <span class="kbd">Enter</span> run &nbsp; <span class="kbd">Ctrl</span> <span class="kbd">Shift</span> <span class="kbd">Enter</span> submit</span>
         </div>
-        <div class="tab-body" id="console-input"><textarea name="input" id="stdin" placeholder="stdin for the Run button...">{{ sub.input_data }}</textarea></div>
-        <div class="tab-body" id="console-output" style="display:none"><pre id="out" style="min-height:100%">{{ sub.output_data }}</pre></div>
+        <div class="tab-body" id="console-input"><textarea name="input" id="stdin" spellcheck="false" aria-label="Test input" placeholder="Type the input your program should read, then press Run.">{{ sub.input_data }}</textarea></div>
+        <div class="tab-body" id="console-output" style="display:none"><pre id="out">{{ sub.output_data }}</pre></div>
         <div class="tab-body" id="console-result" style="display:none"><div class="muted">Submit your code to see the verdict.</div></div>
-      </div>
-
-      <div class="actions">
-        <button type="button" class="btn" id="run"><span class="spinner"></span>&#9654; Run</button>
-        <button type="button" class="btn primary" id="submit"><span class="spinner"></span>Submit</button>
-        <span class="muted" id="status"></span>
       </div>
     </form>
   </section>
@@ -124,19 +124,28 @@
   fallback.style.display = "block"; $("editor").style.display = "none";
   if (!serverCode) fallback.value = initialCode(langSel.value);
 
+  function themeName() { return document.documentElement.getAttribute("data-theme") === "light" ? "codelang-light" : "codelang-dark"; }
   require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" } });
   require(["vs/editor/editor.main"], function () {
+    monaco.editor.defineTheme("codelang-dark", { base: "vs-dark", inherit: true, rules: [], colors: {
+      "editor.background": "#0a0c10", "editorGutter.background": "#0a0c10", "editor.lineHighlightBackground": "#12151c",
+      "editorLineNumber.foreground": "#4a5266", "editorLineNumber.activeForeground": "#a3abc0", "editorWidget.background": "#12151c" } });
+    monaco.editor.defineTheme("codelang-light", { base: "vs", inherit: true, rules: [], colors: {
+      "editor.background": "#ffffff", "editor.lineHighlightBackground": "#f3f5fa", "editorLineNumber.foreground": "#9aa3b8",
+      "editorLineNumber.activeForeground": "#3d4558" } });
     var start = fallback.value;
     $("editor").style.display = "block"; fallback.style.display = "none";
     editor = monaco.editor.create($("editor"), {
-      value: start, language: MONACO_LANG[langSel.value], theme: "vs-dark", automaticLayout: true,
-      fontSize: 14, minimap: { enabled: false }, scrollBeyondLastLine: false, tabSize: 4,
-      fontFamily: "Cascadia Code, JetBrains Mono, Consolas, monospace", fontLigatures: true,
-      padding: { top: 10 }, smoothScrolling: true, cursorSmoothCaretAnimation: "on"
+      value: start, language: MONACO_LANG[langSel.value], theme: themeName(), automaticLayout: true,
+      fontSize: 14, lineHeight: 22, minimap: { enabled: false }, scrollBeyondLastLine: false, tabSize: 4,
+      fontFamily: "JetBrains Mono, Cascadia Code, Consolas, monospace", fontLigatures: true,
+      padding: { top: 12 }, smoothScrolling: true, cursorSmoothCaretAnimation: "on", renderLineHighlight: "line",
+      overviewRulerLanes: 0, hideCursorInOverviewRuler: true, scrollbar: { verticalScrollbarSize: 10 }
     });
     editor.onDidChangeModelContent(persist);
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, function () { run(); });
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, function () { submit(); });
+    window.addEventListener("themechange", function () { monaco.editor.setTheme(themeName()); });
   }, function () { /* CDN blocked: keep the plain textarea */ });
   fallback.addEventListener("input", persist);
 
@@ -165,7 +174,7 @@
   }
   function show(group, prefix, name) {
     var bar = document.querySelector('.tabs[data-group="' + group + '"]');
-    [].forEach.call(bar.children, function (b) {
+    [].forEach.call(bar.querySelectorAll(".tab"), function (b) {
       var on = b.dataset.tab === name; b.classList.toggle("on", on);
       $(prefix + b.dataset.tab).style.display = on ? "" : "none";
     });
@@ -188,11 +197,14 @@
   document.addEventListener("click", function (e) {
     var id = e.target.dataset && e.target.dataset.copy; if (!id) return;
     navigator.clipboard.writeText($(id).innerText).then(function () {
-      e.target.textContent = "Copied!"; setTimeout(function () { e.target.textContent = "Copy"; }, 1200);
+      e.target.textContent = "Copied"; setTimeout(function () { e.target.textContent = "Copy"; }, 1200);
     });
   });
 
   // ---------- run / submit ----------
+  var CHECK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  var CROSS = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  var CLOCK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
   function esc(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : s; return d.innerHTML; }
   function post(url, btn) {
     var fd = new FormData();
@@ -211,17 +223,18 @@
     post(URL_RUN, "run").then(function (j) {
       $("out").textContent = (j.output || "") + (j.error ? "\n" + j.error : "") || "(no output)";
       show("console", "console-", "output");
-      $("status").textContent = ""; toast(j.label + " · " + j.time_ms + " ms", j.verdict === "AC" ? "success" : "error");
+      toast(j.label + " · " + j.time_ms + " ms", j.verdict === "AC" ? "success" : "error");
     }).catch(function (e) { toast(e.message, "error"); });
   }
   function submit() {
     post(URL_SUBMIT, "submit").then(function (j) {
       var ok = j.verdict === "AC", html = "";
-      html += '<div class="verdict ' + esc(j.verdict) + '"><div class="icon">' + (ok ? "✅" : "❌") + '</div><div><div class="big">' + esc(j.label) +
-        '</div><div class="muted">' + j.passed + "/" + j.total + " test cases · " + j.time_ms + " ms</div></div></div>";
+      var icon = ok ? CHECK : (j.verdict === "TLE" || j.verdict === "SE" ? CLOCK : CROSS);
+      html += '<div class="verdict ' + esc(j.verdict) + '"><div class="vi">' + icon + '</div><div><div class="big">' + esc(j.label) +
+        '</div><div class="muted">' + j.passed + "/" + j.total + " test cases passed · " + j.time_ms + " ms</div></div></div>";
       if (j.message) html += "<pre>" + esc(j.message) + "</pre>";
       html += '<div class="case-pills">' + j.cases.map(function (c, i) {
-        return '<div class="case-pill ' + (c.verdict === "AC" ? "AC" : "bad") + '" style="animation-delay:' + i * 80 + 'ms" title="' + esc(c.verdict) + '">' + c.index + "</div>";
+        return '<div class="case-pill ' + (c.verdict === "AC" ? "AC" : "bad") + '" style="animation-delay:' + i * 70 + 'ms" title="' + esc(c.verdict) + '">' + c.index + "</div>";
       }).join("") + "</div>";
       html += '<a href="' + esc(j.url) + '">Open full submission &rarr;</a>';
       $("console-result").innerHTML = html;
@@ -235,7 +248,7 @@
     }).catch(function (e) { toast(e.message, "error"); });
   }
   function confetti() {
-    var colors = ["#7c5cff", "#22d3ee", "#34d399", "#fbbf24", "#f87171"];
+    var colors = ["#6d7dff", "#38bdf8", "#3ecf8e", "#f5b546", "#f4717f"];
     for (var i = 0; i < 70; i++) {
       var c = document.createElement("i"); c.className = "confetti";
       c.style.left = Math.random() * 100 + "vw"; c.style.background = colors[i % 5];

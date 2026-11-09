@@ -4,27 +4,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{% block title %}CodeLANG{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'css/codelang.css' %}">
+  <script>
+    /* apply the saved theme before first paint so there is no flash */
+    (function () {
+      var t = "dark";
+      try { t = localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"); } catch (e) {}
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="{% static 'css/codelang.css' %}?v=3">
   {% block extra_head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
   {% block nav %}
   <header class="nav">
-    <a class="brand" href="/">Code<span>LANG</span></a>
+    <a class="brand" href="/">{% include "_logo.html" %}<span>Code<b>LANG</b></span></a>
     {% if user.is_authenticated %}
     <nav class="nav-links">
       <a href="{% url 'home-start' %}" {% if request.resolver_match.url_name == 'home-start' %}class="active"{% endif %}>Problems</a>
       <a href="{% url 'submission-list' %}" {% if request.resolver_match.url_name == 'submission-list' %}class="active"{% endif %}>Submissions</a>
-      {% if user.is_staff %}<a href="{% url 'manage_problem' %}">Manage</a>{% endif %}
+      {% if user.is_staff %}<a href="{% url 'manage_problem' %}" {% if request.resolver_match.url_name == 'manage_problem' %}class="active"{% endif %}>Manage</a>{% endif %}
     </nav>
     <div class="nav-spacer"></div>
-    <span class="muted">{{ user.username }}</span>
-    <div class="avatar">{{ user.username|slice:":1" }}</div>
-    <a class="btn sm" href="{% if user.is_staff and request.resolver_match.url_name == 'manage_problem' %}{% url 'logout-employee' %}{% else %}{% url 'logout-user' %}{% endif %}">Logout</a>
+    {% include "_theme_toggle.html" %}
+    <span class="nav-user">{{ user.username }}</span>
+    <div class="avatar" title="{{ user.username }}">{{ user.username|slice:":1" }}</div>
+    <a class="btn sm" href="{% if user.is_staff and request.resolver_match.url_name == 'manage_problem' %}{% url 'logout-employee' %}{% else %}{% url 'logout-user' %}{% endif %}">Log out</a>
     {% else %}
     <div class="nav-spacer"></div>
-    <a class="btn sm" href="/accounts/login/">Login</a>
-    <a class="btn sm primary" href="/accounts/register/">Register</a>
+    {% include "_theme_toggle.html" %}
+    <a class="btn sm ghost" href="/accounts/login/">Log in</a>
+    <a class="btn sm primary" href="/accounts/register/">Sign up</a>
     {% endif %}
   </header>
   {% endblock %}
@@ -34,6 +47,16 @@
   </div>
 
   {% block content %}{% endblock %}
+  <script>
+    /* theme toggle: remembers the choice and tells the editor to switch too */
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-theme-toggle]"); if (!b) return;
+      var next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("theme", next); } catch (err) {}
+      window.dispatchEvent(new CustomEvent("themechange", { detail: next }));
+    });
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

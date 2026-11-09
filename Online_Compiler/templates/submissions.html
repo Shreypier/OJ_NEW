@@ -2,7 +2,7 @@
 {% block title %}Submissions - CodeLANG{% endblock %}
 {% block content %}
 <main class="page">
-  <h1>Submissions{% if prob %} <span class="muted">/ {{ prob.Name }}</span>{% endif %}</h1>
+  <div class="page-head"><div><h1>Submissions{% if prob %} <span class="muted">/ {{ prob.Name }}</span>{% endif %}</h1><div class="muted">Every attempt you have made, newest first.</div></div></div>
   <section class="card">
     <table class="table">
       <thead><tr><th>#</th><th>Problem</th><th>Language</th><th>Verdict</th><th>Passed</th><th>Time</th><th>When</th></tr></thead>

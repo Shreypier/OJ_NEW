@@ -1,25 +1,64 @@
 {% extends "base.html" %}
 {% block title %}CodeLANG - Practice coding{% endblock %}
+{% block body_class %}landing{% endblock %}
 {% block content %}
 <main class="page">
   <section class="hero">
-    <h1><span class="grad-text" id="typed"></span><span class="cursor"></span></h1>
-    <p>Solve problems in C, C++ and Python. Get instant verdicts from a real judge, track every submission, and level up your problem solving.</p>
-    <div class="row" style="justify-content:center">
-      <a class="btn primary" href="/accounts/register/">Get started</a>
-      <a class="btn" href="/accounts/login/">I have an account</a>
+    <div>
+      <span class="eyebrow"><i></i>Python &middot; C &middot; C++</span>
+      <h1>Write code. Get <span class="grad-text">judged instantly.</span></h1>
+      <p class="lead">Practice problems against real test cases, see exactly where a solution fails, and keep a record of every submission as you improve.</p>
+      <div class="row">
+        <a class="btn primary lg" href="/accounts/register/">Start solving</a>
+        <a class="btn lg" href="/accounts/login/">I have an account</a>
+      </div>
+      <div class="hero-stats">
+        <div><b>10 s</b><span>per test case</span></div>
+        <div><b>Hidden</b><span>test cases</span></div>
+        <div><b>Isolated</b><span>sandbox per run</span></div>
+      </div>
+    </div>
+
+    <div class="code-window" aria-hidden="true">
+      <div class="cw-bar"><i></i><i></i><i></i><span>two_sum.py</span></div>
+      <div class="cw-body" id="cw"></div>
+      <div class="cw-foot" id="cw-foot">
+        <span class="ok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Accepted</span>
+        <span class="cases"><i>1</i><i>2</i><i>3</i><i>4</i></span>
+        <span class="muted">17 ms</span>
+      </div>
     </div>
   </section>
-  <section class="grid stats">
-    <div class="card feature"><div class="icon">⚡</div><h3>Instant verdicts</h3><p class="muted">Accepted, Wrong Answer, Time Limit, Compile Error: see exactly what happened on every test case.</p></div>
-    <div class="card feature"><div class="icon">🧪</div><h3>Real test cases</h3><p class="muted">Each problem is judged against several hidden cases, so hardcoding the sample won't pass.</p></div>
-    <div class="card feature"><div class="icon">📈</div><h3>Track progress</h3><p class="muted">Every submission is saved with its code, runtime and verdict, so you can see how you improve.</p></div>
+
+  <section class="features">
+    <div class="card feature"><div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg></div><h3>Instant verdicts</h3><p>Accepted, Wrong Answer, Time Limit or Compile Error, with the details of every test case.</p></div>
+    <div class="card feature"><div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6.5L4.5 19a1.5 1.5 0 0 0 1.3 2.2h12.4a1.5 1.5 0 0 0 1.3-2.2L14 9.5V3"/></svg></div><h3>Real test cases</h3><p>Each problem is checked against several hidden cases, so hard-coding the sample won't pass.</p></div>
+    <div class="card feature"><div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.2 8.3 8 9 4.8-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Safe by design</h3><p>Every submission runs in its own throwaway container with no network and strict limits.</p></div>
+    <div class="card feature"><div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></div><h3>Track progress</h3><p>See what you have solved, your acceptance rate and the full history of each attempt.</p></div>
   </section>
 </main>
 {% endblock %}
 {% block scripts %}
 <script>
-  var txt = 'Hey there, welcome to CodeLANG', i = 0, el = document.getElementById('typed');
-  (function type() { if (i < txt.length) { el.textContent += txt.charAt(i++); setTimeout(type, 45); } })();
+  /* types a small solution into the demo window, then reveals the verdict */
+  (function () {
+    var lines = [
+      '<span class="c"># read n and the target, then the numbers</span>',
+      '<span class="k">def</span> <span class="f">solve</span>(nums, target):',
+      '    seen = <span class="f">set</span>()',
+      '    <span class="k">for</span> x <span class="k">in</span> nums:',
+      '        <span class="k">if</span> target - x <span class="k">in</span> seen:',
+      '            <span class="k">return</span> <span class="s">"YES"</span>',
+      '        seen.<span class="f">add</span>(x)',
+      '    <span class="k">return</span> <span class="s">"NO"</span>'
+    ];
+    var el = document.getElementById("cw"), foot = document.getElementById("cw-foot"), i = 0;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { el.innerHTML = lines.join("\n"); foot.classList.add("show"); return; }
+    el.classList.add("cursor");
+    (function next() {
+      if (i < lines.length) { el.innerHTML = lines.slice(0, ++i).join("\n"); setTimeout(next, 420); }
+      else { el.classList.remove("cursor"); setTimeout(function () { foot.classList.add("show"); }, 300); }
+    })();
+  })();
 </script>
 {% endblock %}

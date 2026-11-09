@@ -1,15 +1,14 @@
-{% extends "base.html" %}
+{% extends "auth_base.html" %}
 {% block title %}Employee login - CodeLANG{% endblock %}
-{% block content %}
-<div class="auth-wrap">
-  <form class="card auth-card" method="post">
-    {% csrf_token %}
-    <h2>Employee portal</h2>
-    <p class="sub">Manage problems and test cases</p>
-    <div class="field"><label for="employee_id">Employee ID</label><input type="text" id="employee_id" name="employee_id" autofocus required></div>
-    <div class="field"><label for="password">Password</label><input type="password" id="password" name="password" autocomplete="current-password" required></div>
-    <button type="submit" class="btn primary block">Sign in</button>
-    <p class="auth-alt"><a href="/accounts/login/">Back to user login</a></p>
-  </form>
-</div>
+{% block aside_title %}The workspace for the people behind the problems.{% endblock %}
+{% block aside_text %}Create problems, write test cases and keep the judge's library sharp.{% endblock %}
+{% block form_content %}
+<span class="tag-employee"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Employee portal</span>
+<h2>Employee sign in</h2>
+<p class="sub">Use the employee ID and password you were given.</p>
+<div class="field"><label for="employee_id">Employee ID</label><input type="text" id="employee_id" name="employee_id" placeholder="e.g. EMP1001" autocomplete="username" autofocus required></div>
+<div class="field"><label for="password">Password</label>
+  <div class="input-wrap"><input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required><button type="button" class="reveal" data-reveal="password">Show</button></div></div>
+<button type="submit" class="btn primary lg block">Sign in</button>
+<div class="auth-alt"><span><a href="/accounts/login/">&larr; Back to user login</a></span></div>
 {% endblock %}
