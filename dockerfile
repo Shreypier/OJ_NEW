@@ -16,6 +16,10 @@ USER judge
 
 EXPOSE 8000
 ENV DJANGO_SETTINGS_MODULE=Online_Judge.settings PYTHONUNBUFFERED=1
+# Inside this image there is no Docker daemon, so submissions run directly in THIS
+# container (timeouts + rlimits only). For per-submission containers, run the app on the
+# host with JUDGE_BACKEND=docker (the default) instead of inside this image.
+ENV JUDGE_BACKEND=local
 
 # For stronger isolation run with:
 #   docker run --read-only --tmpfs /tmp --memory=512m --cpus=1 --pids-limit=128 \

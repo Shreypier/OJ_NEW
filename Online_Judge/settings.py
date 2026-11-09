@@ -139,8 +139,13 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Judge limits (see Online_Compiler/judge.py)
+# Judge (see Online_Compiler/judge.py and sandbox/)
+# "docker": each submission runs in its own locked-down container (safe).
+# "local":  runs on the host with only timeouts (development/tests, NOT safe).
+JUDGE_BACKEND = os.environ.get('JUDGE_BACKEND', 'docker')
+JUDGE_DOCKER_IMAGE = 'codelang-sandbox'
+JUDGE_CONTAINER_MEMORY_MB = 512
 JUDGE_COMPILE_TIMEOUT = 15      # seconds
-JUDGE_TIME_LIMIT = 3            # seconds per test case
+JUDGE_TIME_LIMIT = 10           # seconds per test case
 JUDGE_MEMORY_LIMIT_MB = 256     # enforced on Linux only
 JUDGE_OUTPUT_LIMIT_BYTES = 1024 * 1024

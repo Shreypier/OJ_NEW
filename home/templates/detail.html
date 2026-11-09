@@ -1,407 +1,253 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>HOME!</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <link rel="icon" href="favicon.png">
-  <style>
-    /* Split the screen in half */
-    .split {
-      height: 91%;
-      width: 50%;
-      position: fixed;
-      z-index: 1;
-      bottom: 0;
-      overflow-x: hidden;
-      padding-top: 20px;
-    }
-    
-    /* Control the left side */
-    .left {
-      left: 0;
-      background-color:#2C2C2C;
-      border-right: 8px solid black;
-      border-top: 8px solid black;
-    }
+{% extends "base.html" %}
+{% block title %}{{ detail.Name }} - CodeLANG{% endblock %}
+{% block body_class %}ws-body{% endblock %}
+{% block nav %}
+<header class="ws-top">
+  <a class="brand" href="/">Code<span>LANG</span></a>
+  <a class="btn sm" href="{% url 'home-start' %}">&larr; Problems</a>
+  <h1>{{ detail.Name }}</h1>
+  <span class="badge {{ detail.level_class }}">{{ detail.level|title }}</span>
+  <div class="nav-spacer"></div>
+  <span class="muted" style="font-size:13px"><span class="kbd">Ctrl</span>+<span class="kbd">Enter</span> run &nbsp; <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">Enter</span> submit</span>
+  <div class="avatar">{{ user.username|slice:":1" }}</div>
+</header>
+{% endblock %}
 
-    /* Control the right side */
-    .right {
-      right: 0;
-      background-color: #202020;
-      border-top: 8px solid black;
-    }
-    .button-container {
-      text-align: center;
-      justify-content: space-between;
-    }
-    /* If you want the content centered horizontally and vertically */
-    .centered {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: centered;
-    }
-
-    /* Style the image inside the centered container, if needed */
-    .centered img {
-      width: 150px;
-      border-radius: 50%;
-    }
-
-    .cards-container {
-      display: flex;
-      gap: 0px;  /* Space between cards */
-      margin-left: 10px;
-      background-color-white;
-    }
-
-    .copy-button {
-      right: auto;
-      float: right;
-    }
-
-    hr {
-      border: none;
-      height: 1px;
-      /* Set the hr color */
-      color: white;  /* old IE */
-      background-color: white;  /* Modern Browsers */
-    }
-
-    hr.1 {
-      border: none;
-      height: 3px;
-      /* Set the hr color */
-      color: white;  /* old IE */
-      background-color: white;  /* Modern Browsers */
-    }
-
-    hr.white {
-      background-color: white; /* White hr color */
-    }
-
-    .card {
-      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-      transition: 0.3s;
-      width: 48%;
-      margin-left: 5px;
-      display: flex;
-      background-color:#404040;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between; /* Align items to the start and end of the header */
-      align-items: center;
-      padding-right: 10px; /* Add some padding to the right side of the header */
-      background-color:#404040;
-    }
-
-    .card:hover {
-      box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-    }
-
-    .container {
-      padding: 2px 16px;
-      margin-left:0px;
-      background-color:#404040;
-    }
-
-    .code-container {
-      display: flex;
-      border: 1px solid #555;
-      background-color: #F5FEFD;
-      height: 300px; /* Fixed height for the code area */
-      overflow: hidden; /* Hide overflow from both line numbers and code area */
-    }
-
-    .line-numbers {
-      padding: 12px;
-      background-color: #202020;
-      border-right: 1px solid #555;
-      user-select: none;
-      color: white; /* Line numbers color */
-      overflow-y: auto; /* Add vertical scroll to line numbers */
-      height: 100%;
-    }
-
-    .code-area {
-      flex-grow: 1;
-      padding: 12px;
-      border: none;
-      outline: none;
-      resize: none;
-      background-color:#2C2C2C;
-      color: white; /* Code text color */
-      margin: 0; /* Remove margin */
-      height: 100%;
-      overflow: auto; /* Add scroll bar */
-    }
-
-    .code-area-container {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      margin: 0; /* Remove margin */
-    }
-    .submit-button {
-      background-color: #007bff; /* Bluish color */
-      border: none;
-      color: ;
-      padding: 10px 20px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin-top: 20px;
-      cursor: pointer;
-   /* Rounded corners */
-    }
-
-    /* Hover effect */
-    .submit-button:hover {
-      background-color: #007bff; /* Darker bluish color on hover */
-    }
-    .submit-buttons {
-      background-color: white; /* Bluish color */
-      border: none;
-      color: black;
-      padding: 10px 20px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin-top: 20px;
-      cursor: pointer;
-   /* Rounded corners */
-    }
-
-    /* Hover effect */
-    .submit-buttons:hover {
-      background-color: white; /* Darker bluish color on hover */
-    }
-    textarea {
-      width: 100%;
-      background-color: #2C2C2C;
-      color: white; /* Input text color */
-      border-bottom:30px;
-      border-left:30px solid #202020;
-      border-bottom:30px solid #202020;
-      resize:none;
-      outline: none;
-    }
-
-    .code-header {
-      background-color: black;
-      color: white;
-      padding: 10px;
-      margin-left:5px;
-      border-top: 1px solid #555;
-      border-bottom: 1px solid #555;
-      margin: 0; /* Remove margin */
-    }
-
-    /* Top navigation styling */
-    .top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      background-color:#202020;
-      border-bottom: 8px solid black;
-    }
-
-    .top-nav a {
-      color: white;
-      text-decoration: none;
-      padding: 10px;
-    }
-
-    .top-nav .center {
-      color: white;
-    }
-
-    .top-nav .head {
-      color:white;
-      margin-left:0px;
-    }
-
-    .navigation-links {
-      display: flex;
-      align-items: center;
-    }
-  </style>
-</head>
-<body> 
-  <div class="top-nav">
-    <div class="head">Difficulty: {{detail.level}}</div>
-    <div class="navigation-links">
-      <a href="#">Code</a>
-      <a href="{% url 'submission-list' %}?problem={{ detail.id }}">Submissions</a>
+{% block content %}
+<div class="ws" id="ws">
+  <!-- LEFT: problem statement -->
+  <section class="pane">
+    <div class="tabs" data-group="left">
+      <button class="tab on" data-tab="desc">Description</button>
+      <button class="tab" data-tab="subs">Submissions</button>
     </div>
-  </div>
-    <div class="split left">
-        <div class="top"> 
-          {% if detail %}
-          <h2><font color="white" style="margin-left:10px;">{{detail.Name}} </font></h2>
-            <hr>
-            <br>
-          <p><font color="white" style="margin-left:10px;">{{detail.desc}}</font></p>
-          <br><br>
-          
-          <h3><font color="white" style="margin-left:10px;">Input </font></h3>
-          <br>
-          <pre><font color="white" style="margin-left:10px;">{{ detail.input_constraints|linebreaksbr }}</font></pre>
-          <br><br>
-          
-          <h3><font color="white" style="margin-left:10px;">Output </font></h3>
-          <br>
-          <pre><font color="white" style="margin-left:10px;">{{ detail.output_constraints|linebreaksbr }}</font></pre>
-          <br><br>
-          
-          <h3><font color="white" style="margin-left:10px;">Constraint </font></h3>
-          <br>
-          <pre><font color="white" style="margin-left:10px;">{{ detail.constraint|linebreaksbr }}</font></pre>
-          <br><hr><br>
-          <h3><font color="white" style="margin-left:10px;">Example </font></h3>
-          <br>
-          <div class="cards-container">
-          <div class="card">
-            <div class="container">
-              <div class="card-header">
-              <h6><font color="white" style="margin-top:0px;">Input</font></h6>
-              <button class="copy-button" onclick="copyText('textToCopy')"><i class="fas fa-copy" style="font-size:5px;color:red;"></i></button>
-              </div>
-              <hr class="white">
-              <div id="textToCopy">
-              <pre><font color="white" style="margin-left:0px;">{{ detail.examples|linebreaksbr }}</font></pre>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="container">
-              <div class="card-header">
-              <h6><font color="white" style="margin-left:0px;">Output </font></h6>
-              <button class="copy-button" onclick="copyText('textToCopy1')"><i class="fas fa-copy"></i></button>
-              </div>
-              <hr class="white">
-              <div id="textToCopy1">
-              <pre><font color="white" style="margin-left:0px;">{{ detail.output_const|linebreaksbr }}</font></pre>
-              </div>
-            </div>
-          </div>
+    <div class="tab-body prose" id="left-desc">
+      <h2>{{ detail.Name }}</h2>
+      <p>{{ detail.desc }}</p>
+      {% if detail.input_constraints %}<h3>Input</h3><pre>{{ detail.input_constraints }}</pre>{% endif %}
+      {% if detail.output_constraints %}<h3>Output</h3><pre>{{ detail.output_constraints }}</pre>{% endif %}
+      {% if detail.constraint %}<h3>Constraints</h3><pre>{{ detail.constraint }}</pre>{% endif %}
+      {% if detail.examples or detail.output_const %}
+      <h3>Example</h3>
+      <div class="example">
+        <div class="box"><b>Input</b><button class="btn sm copy" data-copy="ex-in">Copy</button><pre id="ex-in">{{ detail.examples }}</pre></div>
+        <div class="box"><b>Output</b><button class="btn sm copy" data-copy="ex-out">Copy</button><pre id="ex-out">{{ detail.output_const }}</pre></div>
+      </div>
+      {% endif %}
+      {% for c in sample_cases %}
+      <h3>Sample test {{ forloop.counter }}</h3>
+      <div class="example">
+        <div class="box"><b>Input</b><button class="btn sm copy" data-copy="s{{ forloop.counter }}-in">Copy</button><pre id="s{{ forloop.counter }}-in">{{ c.input_data }}</pre></div>
+        <div class="box"><b>Expected output</b><pre>{{ c.expected_output }}</pre></div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="tab-body" id="left-subs" style="display:none">
+      <table class="table">
+        <thead><tr><th>#</th><th>Verdict</th><th>Lang</th><th>Time</th><th>When</th></tr></thead>
+        <tbody id="hist">
+        {% for s in history %}
+          <tr><td><a href="{% url 'submission-detail' s.id %}">{{ s.id }}</a></td><td><span class="badge {{ s.verdict }}">{{ s.verdict_label }}</span></td>
+              <td class="muted">{{ s.language }}</td><td class="muted">{{ s.time_ms }} ms</td><td class="muted">{{ s.created|timesince }} ago</td></tr>
+        {% empty %}<tr class="none"><td colspan="5" class="empty">No submissions for this problem yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="divider" id="divider"></div>
+
+  <!-- RIGHT: editor + console -->
+  <section class="pane">
+    <form id="form" method="post" style="display:contents">
+      {% csrf_token %}
+      <div class="editor-bar">
+        <select name="language" id="language">
+          {% for lang in languages %}<option value="{{ lang }}" {% if sub.language == lang %}selected{% endif %}>{{ lang }}</option>{% endfor %}
+        </select>
+        <button type="button" class="btn sm" id="reset">Reset</button>
+        <div class="nav-spacer"></div>
+        <span class="muted" id="saved" style="font-size:12px"></span>
+      </div>
+      <div id="editor"></div>
+      <textarea name="code" id="code-fallback" spellcheck="false" placeholder="Write your code here...">{{ sub.code }}</textarea>
+
+      <div class="console">
+        <div class="tabs" data-group="console">
+          <button type="button" class="tab on" data-tab="input">Custom input</button>
+          <button type="button" class="tab" data-tab="output">Output</button>
+          <button type="button" class="tab" data-tab="result">Result</button>
         </div>
-        </div><br>
-        {% endif %}
-    </div>
-    <div class="split right">
-        <div class="top">
-          <h2><font color="white"><align="center">Code compiler</align></font></h2>
-            {% for message in messages %}<div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %}">{{ message }}</div>{% endfor %}
-            <form action="?" method="post">{% csrf_token %}
-              <div>
-              <label for="language"><font color="white">Choose a language:</font></label>
-              <select name="language" id="language">
-                {% for lang in languages %}<option value="{{ lang }}" {% if sub.language == lang %}selected{% endif %}>{{ lang }}</option>{% endfor %}
-              </select>
-            </div>
-              <br><br>  
-              
-              {% if sub %}
-              <div class="code-header">Code</div>
-              <div class="code-container">
-                <div class="line-numbers" id="line-numbers">1</div>
-                <div class="code-area-container">
-             <textarea class="code-area" id="code-area"  rows="10" cols="20" name ="code" spellcheck="false">{{sub.code}}</textarea>
-            </div>
-          </div>
-      
-              <div>
-                <div class="code-header">Input</div>
-              <textarea rows="5" cols="20" name="input">{{sub.input_data}}</textarea>
-              </div>
-          
-              <div>
-                <div class="code-header">Output {% if sub.verdict %}<span>({{ sub.verdict }}, {{ sub.time_ms }} ms)</span>{% endif %}</div>
-                   <textarea rows="5" cols="20" readonly>{{sub.output_data}}</textarea>
-              </div>
-            
-             {% else %}
-             <div class="code-header">Code</div>
-              <div class="code-container">
-                <div class="line-numbers" id="line-numbers">1</div>
-                <div class="code-area-container">
-             <textarea class="code-area" id="code-area"  rows="10" cols="20" name ="code" spellcheck="false"></textarea>
-            </div>
-          </div>
-      
-              <div>
-                <div class="code-header">Input</div>
-              <textarea rows="5" cols="20" name="input"></textarea>
-              </div>
-            
-             {% endif %}
-            <div class="button-container">
-              <button type="submit" class="submit-buttons"> Run~ </button>
-              <button type="submit" class="submit-button"  formaction="/home/id={{ detail.id }}/submit/">Submit</button>
-            </div>
-            </form>
-        </div>
-    </div>
-      
+        <div class="tab-body" id="console-input"><textarea name="input" id="stdin" placeholder="stdin for the Run button...">{{ sub.input_data }}</textarea></div>
+        <div class="tab-body" id="console-output" style="display:none"><pre id="out" style="min-height:100%">{{ sub.output_data }}</pre></div>
+        <div class="tab-body" id="console-result" style="display:none"><div class="muted">Submit your code to see the verdict.</div></div>
+      </div>
 
-  <script>
-    function copyText(containerId) {
-      // The text to copy
-      var textToCopy = document.getElementById(containerId).innerText;
-      
-      // Create a temporary textarea element to hold the text to copy
-      var tempTextarea = document.createElement("textarea");
-      tempTextarea.value = textToCopy;
-      document.body.appendChild(tempTextarea);
-    
-      // Select the text in the textarea
-      tempTextarea.select();
-      tempTextarea.setSelectionRange(0, 99999); // For mobile devices
-    
-      // Copy the text inside the textarea
-      navigator.clipboard.writeText(tempTextarea.value).then(function() {
-        // Alert the copied text
-        alert("Copied the text: " + tempTextarea.value);
-      }, function(err) {
-        console.error('Could not copy text: ', err);
-      });
-    
-      // Remove the temporary textarea element
-      document.body.removeChild(tempTextarea);
+      <div class="actions">
+        <button type="button" class="btn" id="run"><span class="spinner"></span>&#9654; Run</button>
+        <button type="button" class="btn primary" id="submit"><span class="spinner"></span>Submit</button>
+        <span class="muted" id="status"></span>
+      </div>
+    </form>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+<script>
+(function () {
+  var PID = {{ detail.id }};
+  var URL_RUN = "{% url 'problem-details' detail.id %}";
+  var URL_SUBMIT = "{% url 'submit-page' detail.id %}";
+  var CSRF = document.querySelector("[name=csrfmiddlewaretoken]").value;
+  var $ = function (id) { return document.getElementById(id); };
+  var langSel = $("language"), fallback = $("code-fallback"), editor = null;
+
+  var STARTERS = {
+    "python": "# Read input with input(), print the answer\n\n",
+    "c": "#include <stdio.h>\n\nint main(void) {\n    \n    return 0;\n}\n",
+    "c++": "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    \n    return 0;\n}\n"
+  };
+  var MONACO_LANG = { "python": "python", "c": "c", "c++": "cpp" };
+  var key = function (lang) { return "codelang:" + PID + ":" + lang; };
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function save(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  function getCode() { return editor ? editor.getValue() : fallback.value; }
+  function setCode(v) { if (editor) editor.setValue(v); else fallback.value = v; }
+  function initialCode(lang) { return load(key(lang)) || STARTERS[lang] || ""; }
+
+  // ---------- editor (Monaco, with textarea fallback) ----------
+  var serverCode = fallback.value;
+  fallback.style.display = "block"; $("editor").style.display = "none";
+  if (!serverCode) fallback.value = initialCode(langSel.value);
+
+  require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" } });
+  require(["vs/editor/editor.main"], function () {
+    var start = fallback.value;
+    $("editor").style.display = "block"; fallback.style.display = "none";
+    editor = monaco.editor.create($("editor"), {
+      value: start, language: MONACO_LANG[langSel.value], theme: "vs-dark", automaticLayout: true,
+      fontSize: 14, minimap: { enabled: false }, scrollBeyondLastLine: false, tabSize: 4,
+      fontFamily: "Cascadia Code, JetBrains Mono, Consolas, monospace", fontLigatures: true,
+      padding: { top: 10 }, smoothScrolling: true, cursorSmoothCaretAnimation: "on"
+    });
+    editor.onDidChangeModelContent(persist);
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, function () { run(); });
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, function () { submit(); });
+  }, function () { /* CDN blocked: keep the plain textarea */ });
+  fallback.addEventListener("input", persist);
+
+  var timer;
+  function persist() {
+    clearTimeout(timer);
+    timer = setTimeout(function () { save(key(langSel.value), getCode()); $("saved").textContent = "Saved"; }, 400);
+  }
+  var prevLang = langSel.value;
+  langSel.addEventListener("change", function () {
+    save(key(prevLang), getCode());
+    prevLang = langSel.value;
+    setCode(initialCode(prevLang));
+    if (editor) monaco.editor.setModelLanguage(editor.getModel(), MONACO_LANG[prevLang]);
+  });
+  $("reset").addEventListener("click", function () {
+    if (confirm("Reset to the starter code for " + langSel.value + "?")) { setCode(STARTERS[langSel.value] || ""); persist(); }
+  });
+
+  // ---------- tabs ----------
+  function tabs(group, prefix) {
+    var bar = document.querySelector('.tabs[data-group="' + group + '"]');
+    bar.addEventListener("click", function (e) {
+      var t = e.target.dataset.tab; if (!t) return; show(group, prefix, t);
+    });
+  }
+  function show(group, prefix, name) {
+    var bar = document.querySelector('.tabs[data-group="' + group + '"]');
+    [].forEach.call(bar.children, function (b) {
+      var on = b.dataset.tab === name; b.classList.toggle("on", on);
+      $(prefix + b.dataset.tab).style.display = on ? "" : "none";
+    });
+  }
+  tabs("left", "left-"); tabs("console", "console-");
+
+  // ---------- resizable divider ----------
+  var div = $("divider"), ws = $("ws");
+  div.addEventListener("pointerdown", function (e) {
+    div.setPointerCapture(e.pointerId); div.classList.add("drag");
+    function move(ev) {
+      var r = ws.getBoundingClientRect(), p = ((ev.clientX - r.left) / r.width) * 100;
+      ws.style.setProperty("--left", Math.max(22, Math.min(75, p)) + "%");
     }
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-cpp.min.js"></script>
-  <script>
-    const codeArea = document.getElementById('code-area');
-    const lineNumbers = document.getElementById('line-numbers');
+    function up() { div.classList.remove("drag"); div.removeEventListener("pointermove", move); div.removeEventListener("pointerup", up); }
+    div.addEventListener("pointermove", move); div.addEventListener("pointerup", up);
+  });
 
-    codeArea.addEventListener('input', updateLineNumbers);
-    codeArea.addEventListener('scroll', syncScroll);
+  // ---------- copy buttons ----------
+  document.addEventListener("click", function (e) {
+    var id = e.target.dataset && e.target.dataset.copy; if (!id) return;
+    navigator.clipboard.writeText($(id).innerText).then(function () {
+      e.target.textContent = "Copied!"; setTimeout(function () { e.target.textContent = "Copy"; }, 1200);
+    });
+  });
 
-    function updateLineNumbers() {
-      const lines = codeArea.value.split('\n').length;
-      lineNumbers.innerHTML = Array(lines).fill(0).map((_, i) => i + 1).join('<br>');
+  // ---------- run / submit ----------
+  function esc(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : s; return d.innerHTML; }
+  function post(url, btn) {
+    var fd = new FormData();
+    fd.append("language", langSel.value); fd.append("code", getCode()); fd.append("input", $("stdin").value);
+    fd.append("csrfmiddlewaretoken", CSRF);
+    $("run").disabled = $("submit").disabled = true; $("status").textContent = btn === "run" ? "Running..." : "Judging...";
+    return fetch(url, { method: "POST", body: fd, headers: { "X-Requested-With": "XMLHttpRequest" }, credentials: "same-origin" })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Request failed"); return j; }); })
+      .finally(function () { $("run").disabled = $("submit").disabled = false; $("status").textContent = ""; });
+  }
+  function toast(msg, kind) {
+    var t = document.createElement("div"); t.className = "toast " + (kind || ""); t.textContent = msg;
+    $("toasts").appendChild(t); setTimeout(function () { t.remove(); }, 5000);
+  }
+  function run() {
+    post(URL_RUN, "run").then(function (j) {
+      $("out").textContent = (j.output || "") + (j.error ? "\n" + j.error : "") || "(no output)";
+      show("console", "console-", "output");
+      $("status").textContent = ""; toast(j.label + " · " + j.time_ms + " ms", j.verdict === "AC" ? "success" : "error");
+    }).catch(function (e) { toast(e.message, "error"); });
+  }
+  function submit() {
+    post(URL_SUBMIT, "submit").then(function (j) {
+      var ok = j.verdict === "AC", html = "";
+      html += '<div class="verdict ' + esc(j.verdict) + '"><div class="icon">' + (ok ? "✅" : "❌") + '</div><div><div class="big">' + esc(j.label) +
+        '</div><div class="muted">' + j.passed + "/" + j.total + " test cases · " + j.time_ms + " ms</div></div></div>";
+      if (j.message) html += "<pre>" + esc(j.message) + "</pre>";
+      html += '<div class="case-pills">' + j.cases.map(function (c, i) {
+        return '<div class="case-pill ' + (c.verdict === "AC" ? "AC" : "bad") + '" style="animation-delay:' + i * 80 + 'ms" title="' + esc(c.verdict) + '">' + c.index + "</div>";
+      }).join("") + "</div>";
+      html += '<a href="' + esc(j.url) + '">Open full submission &rarr;</a>';
+      $("console-result").innerHTML = html;
+      show("console", "console-", "result");
+      var none = document.querySelector("#hist .none"); if (none) none.remove();
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td><a href="' + esc(j.url) + '">' + j.id + '</a></td><td><span class="badge ' + esc(j.verdict) + '">' + esc(j.label) +
+        '</span></td><td class="muted">' + esc(langSel.value) + '</td><td class="muted">' + j.time_ms + ' ms</td><td class="muted">just now</td>';
+      $("hist").insertBefore(tr, $("hist").firstChild);
+      if (ok) confetti();
+    }).catch(function (e) { toast(e.message, "error"); });
+  }
+  function confetti() {
+    var colors = ["#7c5cff", "#22d3ee", "#34d399", "#fbbf24", "#f87171"];
+    for (var i = 0; i < 70; i++) {
+      var c = document.createElement("i"); c.className = "confetti";
+      c.style.left = Math.random() * 100 + "vw"; c.style.background = colors[i % 5];
+      c.style.animationDuration = (2 + Math.random() * 2) + "s"; c.style.animationDelay = Math.random() * .4 + "s";
+      document.body.appendChild(c); setTimeout(c.remove.bind(c), 4500);
     }
-
-    function syncScroll() {
-      lineNumbers.scrollTop = codeArea.scrollTop;
-    }
-
-    updateLineNumbers();
-  </script>
- 
-  
-</body>
-</html>
+  }
+  $("run").addEventListener("click", run);
+  $("submit").addEventListener("click", submit);
+  document.addEventListener("keydown", function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); e.shiftKey ? submit() : run(); }
+  });
+})();
+</script>
+{% endblock %}

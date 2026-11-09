@@ -3,3 +3,11 @@ __pycache__/
 backups/
 staticfiles/
 .env
+
+# old judge run artifacts (no longer produced; OneDrive may restore them)
+codes/
+inputs/
+outputs/
+test_outputs/
+user_output/
+user_outputs/

@@ -1,23 +1,27 @@
 {% extends "base.html" %}
-{% block title %}My submissions{% endblock %}
+{% block title %}Submissions - CodeLANG{% endblock %}
 {% block content %}
-<h3>My submissions{% if prob %} &ndash; {{ prob.Name }}{% endif %}</h3>
-<table class="table table-dark table-striped">
-  <thead><tr><th>#</th><th>Problem</th><th>Language</th><th>Verdict</th><th>Passed</th><th>Time</th><th>When</th></tr></thead>
-  <tbody>
-  {% for s in subs %}
-    <tr>
-      <td><a href="{% url 'submission-detail' s.id %}">{{ s.id }}</a></td>
-      <td><a href="{% url 'problem-details' s.problem.id %}">{{ s.problem.Name }}</a></td>
-      <td>{{ s.language }}</td>
-      <td class="{% if s.verdict == 'AC' %}text-success{% else %}text-danger{% endif %}">{{ s.verdict_label }}</td>
-      <td>{{ s.passed }}/{{ s.total }}</td>
-      <td>{{ s.time_ms }} ms</td>
-      <td>{{ s.created|date:"Y-m-d H:i" }}</td>
-    </tr>
-  {% empty %}
-    <tr><td colspan="7" class="text-center">No submissions yet.</td></tr>
-  {% endfor %}
-  </tbody>
-</table>
+<main class="page">
+  <h1>Submissions{% if prob %} <span class="muted">/ {{ prob.Name }}</span>{% endif %}</h1>
+  <section class="card">
+    <table class="table">
+      <thead><tr><th>#</th><th>Problem</th><th>Language</th><th>Verdict</th><th>Passed</th><th>Time</th><th>When</th></tr></thead>
+      <tbody>
+      {% for s in subs %}
+        <tr>
+          <td><a href="{% url 'submission-detail' s.id %}">{{ s.id }}</a></td>
+          <td><a class="title" href="{% url 'problem-details' s.problem.id %}">{{ s.problem.Name }}</a></td>
+          <td class="muted">{{ s.language }}</td>
+          <td><span class="badge {{ s.verdict }}">{{ s.verdict_label }}</span></td>
+          <td>{{ s.passed }}/{{ s.total }}</td>
+          <td class="muted">{{ s.time_ms }} ms</td>
+          <td class="muted">{{ s.created|date:"M j, H:i" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="empty">No submissions yet. <a href="{% url 'home-start' %}">Pick a problem</a>.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</main>
 {% endblock %}

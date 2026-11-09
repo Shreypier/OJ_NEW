@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import login,authenticate,logout
 from django.contrib import messages
@@ -7,36 +7,65 @@ from django.template import loader
 from django.contrib.auth.decorators import login_required, user_passes_test
 from home.models import problem, TestCase
 from Online_Compiler import judge
+from Online_Compiler.models import Submission
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
+def is_ajax(request):
+    return request.headers.get("x-requested-with") == "XMLHttpRequest"
+
+
 @login_required
 def start(request):
-    all_problems = problem.objects.all()  # Fetch all problems
+    all_problems = list(problem.objects.all())
+    subs = Submission.objects.filter(user=request.user)
+    solved_ids = set(subs.filter(verdict=judge.AC).values_list("problem_id", flat=True))
+    attempted_ids = set(subs.values_list("problem_id", flat=True))
+    for p in all_problems:
+        p.level_class = (p.level or "").strip().lower()
+        p.status = "solved" if p.id in solved_ids else "attempted" if p.id in attempted_ids else "todo"
+    total_subs = subs.count()
     context = {
-        'username': request.user.username,
-        'all_problems': all_problems,
+        "username": request.user.username,
+        "all_problems": all_problems,
+        "solved_count": len(solved_ids),
+        "total_problems": len(all_problems),
+        "total_subs": total_subs,
+        "accepted_subs": subs.filter(verdict=judge.AC).count(),
+        "recent": subs.select_related("problem")[:5],
     }
-    return render(request, 'start.html', context)
+    return render(request, "start.html", context)
 
 
 @login_required
 def problem_details(request, id):
     detail = get_object_or_404(problem, id=id)
+    detail.level_class = (detail.level or "").strip().lower()
     context = {
         "detail": detail,
         "sample_cases": detail.test_cases.filter(is_sample=True),
         "languages": judge.LANGUAGES,
+        "history": Submission.objects.filter(user=request.user, problem=detail)[:10],
     }
     if request.method == "POST":
         language = request.POST.get("language", "")
         code = request.POST.get("code", "")
         input_data = request.POST.get("input", "")
         if language not in judge.LANGUAGES:
+            if is_ajax(request):
+                return JsonResponse({"error": "Choose a supported language."}, status=400)
             messages.error(request, "Choose a supported language.")
             result = None
         else:
             result = judge.run_code(language, code, input_data)
+        if is_ajax(request):
+            return JsonResponse({
+                "verdict": result.verdict,
+                "label": judge.VERDICT_LABELS.get(result.verdict, ""),
+                "output": result.output,
+                "error": result.error,
+                "time_ms": result.time_ms,
+            })
         output = ""
         if result is not None:
             output = result.output or result.error

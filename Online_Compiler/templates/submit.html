@@ -1,31 +1,46 @@
 {% extends "base.html" %}
-{% block title %}Submission #{{ sub.id }}{% endblock %}
+{% block title %}Submission #{{ sub.id }} - CodeLANG{% endblock %}
 {% block content %}
-<h3>{{ sub.problem.Name }}</h3>
-<div class="alert {% if accepted %}alert-success{% else %}alert-danger{% endif %} d-flex justify-content-between">
-  <strong class="verdict">{{ sub.verdict_label }}</strong>
-  <span>{{ sub.passed }}/{{ sub.total }} test cases passed &middot; {{ sub.time_ms }} ms &middot; {{ sub.language }}</span>
-</div>
-{% if sub.message %}<pre class="bg-black p-3 rounded">{{ sub.message }}</pre>{% endif %}
+<main class="page">
+  <div class="row between" style="margin-bottom:14px">
+    <h1 style="margin:0">{{ sub.problem.Name }} <span class="muted">#{{ sub.id }}</span></h1>
+    <div class="row">
+      <a class="btn" href="{% url 'submission-list' %}?problem={{ sub.problem.id }}">History</a>
+      <a class="btn primary" href="{% url 'problem-details' sub.problem.id %}">Back to problem</a>
+    </div>
+  </div>
 
-{% if cases %}
-<h5 class="mt-4">Test cases</h5>
-<ul class="list-group mb-4">
-  {% for c in cases %}
-  <li class="list-group-item bg-secondary-subtle text-dark">
-    <strong>Case {{ c.index }}{% if c.is_sample %} (sample){% else %} (hidden){% endif %}:</strong> {{ c.verdict }} &middot; {{ c.time_ms }} ms
-    {% if c.is_sample %}
-      <pre class="mb-1">Input: {{ c.input_data }}</pre>
-      <pre class="mb-1">Expected: {{ c.expected }}</pre>
-      <pre class="mb-0">Yours: {{ c.actual }}</pre>
-    {% endif %}
-  </li>
-  {% endfor %}
-</ul>
-{% endif %}
+  <div class="verdict {{ sub.verdict }}">
+    <div class="icon">{% if accepted %}✅{% else %}❌{% endif %}</div>
+    <div><div class="big">{{ sub.verdict_label }}</div>
+      <div class="muted">{{ sub.passed }}/{{ sub.total }} test cases &middot; {{ sub.time_ms }} ms &middot; {{ sub.language }} &middot; {{ sub.created|date:"M j, H:i" }}</div></div>
+  </div>
+  {% if sub.message %}<pre style="margin-bottom:16px">{{ sub.message }}</pre>{% endif %}
 
-<h5>Your code</h5>
-<pre class="bg-black p-3 rounded">{{ sub.code }}</pre>
-<a class="btn btn-primary" href="{% url 'problem-details' sub.problem.id %}">Back to problem</a>
-<a class="btn btn-outline-light" href="{% url 'submission-list' %}?problem={{ sub.problem.id }}">History for this problem</a>
+  {% if cases %}
+  <div class="case-pills">{% for c in cases %}<div class="case-pill {% if c.verdict == 'AC' %}AC{% else %}bad{% endif %}" style="animation-delay:{{ forloop.counter0 }}00ms" title="{{ c.verdict }}">{{ c.index }}</div>{% endfor %}</div>
+  {% for c in cases %}{% if c.is_sample %}
+  <div class="card" style="margin-bottom:12px">
+    <b>Case {{ c.index }} (sample)</b> <span class="badge {{ c.verdict }}">{{ c.verdict }}</span> <span class="muted">{{ c.time_ms }} ms</span>
+    <div class="example"><div class="box"><b>Input</b><pre>{{ c.input_data }}</pre></div><div class="box"><b>Expected</b><pre>{{ c.expected }}</pre></div></div>
+    <div class="box"><b class="muted">Your output</b><pre>{{ c.actual }}</pre></div>
+  </div>
+  {% endif %}{% endfor %}
+  {% endif %}
+
+  <h3>Your code</h3>
+  <pre>{{ sub.code }}</pre>
+</main>
 {% endblock %}
+{% block scripts %}{% if accepted and cases %}
+<script>
+  (function () {
+    var colors = ["#7c5cff", "#22d3ee", "#34d399", "#fbbf24", "#f87171"];
+    for (var i = 0; i < 60; i++) {
+      var c = document.createElement("i"); c.className = "confetti";
+      c.style.left = Math.random() * 100 + "vw"; c.style.background = colors[i % 5];
+      c.style.animationDuration = (2 + Math.random() * 2) + "s"; c.style.animationDelay = Math.random() * .5 + "s";
+      document.body.appendChild(c); setTimeout(c.remove.bind(c), 4500);
+    }
+  })();
+</script>{% endif %}{% endblock %}

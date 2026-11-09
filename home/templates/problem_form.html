@@ -1,323 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Problems</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #0b0000;
-            margin: 0;
-            font-family: 'Lato', sans-serif;
-            transition: margin-left 0.5s;
-        }
+{% extends "base.html" %}
+{% block title %}Manage problems - CodeLANG{% endblock %}
+{% block content %}
+<main class="page" style="max-width:1200px">
+  <h1>Manage problems</h1>
+  <div class="sidebar-admin">
+    <nav class="side-links" id="side">
+      <a data-sec="list" class="on">All problems</a>
+      <a data-sec="create">Create</a>
+      <a data-sec="update">Update</a>
+      <a data-sec="cases">Test cases</a>
+      <a data-sec="delete">Delete</a>
+    </nav>
 
-        .container {
-            margin-top: 100px; /* Adjusted for top bar */
-            position: relative;
-        }
+    <div>
+      <!-- LIST -->
+      <section class="admin-section on card" id="sec-list">
+        <h3>All problems</h3>
+        <table class="table">
+          <thead><tr><th>#</th><th>Name</th><th>Level</th><th>Test cases</th></tr></thead>
+          <tbody>
+          {% for p in all_problems %}
+            <tr><td class="muted">{{ p.id }}</td><td><a class="title" href="{% url 'problem-details' p.id %}">{{ p.Name }}</a></td>
+                <td><span class="badge {{ p.level|lower }}">{{ p.level|title }}</span></td><td>{{ p.test_cases.all|length }}</td></tr>
+          {% empty %}<tr><td colspan="4" class="empty">No problems yet.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </section>
 
-        #mySidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: #780909;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
+      <!-- CREATE -->
+      <section class="admin-section card" id="sec-create">
+        <h3>Add problem</h3>
+        <form method="post">{% csrf_token %}
+          <input type="hidden" name="action" value="create">
+          <div class="field"><label for="c-name">Name</label><input type="text" id="c-name" name="Name" required></div>
+          <div class="field"><label for="c-level">Level</label>
+            <select id="c-level" name="level"><option>Easy</option><option>Medium</option><option>Hard</option></select></div>
+          <div class="field"><label for="c-desc">Description</label><textarea id="c-desc" name="desc" rows="4" required></textarea></div>
+          <div class="grid" style="grid-template-columns:1fr 1fr">
+            <div class="field"><label for="c-in">Sample input</label><textarea id="c-in" name="input_test" rows="5" spellcheck="false"></textarea></div>
+            <div class="field"><label for="c-out">Sample expected output</label><textarea id="c-out" name="output_test" rows="5" required></textarea></div>
+          </div>
+          <p class="muted">The sample becomes the first test case. Add more (including hidden ones) under "Test cases".</p>
+          <button class="btn primary" type="submit">Create problem</button>
+        </form>
+      </section>
 
-        #mySidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 25px;
-            color: white;
-            display: block;
-            transition: 0.3s;
-        }
+      <!-- UPDATE -->
+      <section class="admin-section card" id="sec-update">
+        <h3>Update problem</h3>
+        <form method="post">{% csrf_token %}
+          <input type="hidden" name="action" value="update">
+          <div class="field"><label for="u-id">Problem</label>
+            <select id="u-id" name="update_id" required><option value="">Select a problem</option>
+              {% for p in all_problems %}<option value="{{ p.id }}">{{ p.Name }}</option>{% endfor %}</select></div>
+          <div class="field"><label for="u-name">New name (optional)</label><input type="text" id="u-name" name="Name"></div>
+          <div class="field"><label for="u-level">New level (optional)</label><input type="text" id="u-level" name="level" placeholder="Easy / Medium / Hard"></div>
+          <div class="field"><label for="u-desc">New description (optional)</label><textarea id="u-desc" name="desc" rows="4"></textarea></div>
+          <p class="muted">Blank fields keep their current value.</p>
+          <button class="btn primary" type="submit">Update</button>
+        </form>
+      </section>
 
-        #mySidebar a:hover {
-            color: black;
-            background-color: #ccc;
-        }
+      <!-- TEST CASES -->
+      <section class="admin-section card" id="sec-cases">
+        <h3>Add test case</h3>
+        <form method="post">{% csrf_token %}
+          <input type="hidden" name="action" value="add_case">
+          <div class="field"><label for="t-p">Problem</label>
+            <select id="t-p" name="problem_id" required>{% for p in all_problems %}<option value="{{ p.id }}">{{ p.Name }}</option>{% endfor %}</select></div>
+          <div class="grid" style="grid-template-columns:1fr 1fr">
+            <div class="field"><label for="t-in">Input</label><textarea id="t-in" name="input_data" rows="4" spellcheck="false"></textarea></div>
+            <div class="field"><label for="t-out">Expected output</label><textarea id="t-out" name="expected_output" rows="4" required></textarea></div>
+          </div>
+          <label style="display:flex;gap:8px;align-items:center;text-transform:none;font-size:14px"><input type="checkbox" name="is_sample" style="width:auto"> Sample (visible to users)</label>
+          <br><button class="btn primary" type="submit">Add test case</button>
+        </form>
 
-        #main-content {
-            padding: 16px;
-            margin-left: 250px; /* Adjusted margin when sidebar is open */
-            transition: margin-left 0.5s;
-        }
-
-        #openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            color: black;
-            position: absolute;
-            top: 15px;
-            left: 15px;
-        }
-
-        #openbtn:hover {
-            color: black;
-        }
-
-        .top-bar {
-            width: 100%;
-            height: 60px;
-            background-color: #780909;
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            border-bottom: 2px solid black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .top-bar h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .top-bar #openbtn {
-            position: absolute;
-            left: 15px;
-            top: 15px;
-        }
-
-        .logout-btn {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-        }
-
-        .logout-btn a {
-            color: white;
-            text-decoration: none;
-            font-size: 20px;
-            background-color: #780909;
-            border: none;
-            cursor: pointer;
-        }
-
-        .logout-btn a:hover {
-            color: black;
-        }
-
-        .form-section {
-            display: none; /* Initially hide all forms */
-        }
-    </style>
-</head>
-<body>
-    <div id="mySidebar">
-        <a href="#" onclick="showForm('createForm')">Create</a>
-        <a href="#" onclick="showForm('updateForm')">Update</a>
-        <a href="#" onclick="showForm('deleteForm')">Delete</a>
-        <a href="#" onclick="showForm('casesForm')">Test cases</a>
-    </div>
-
-    <div class="top-bar">
-        <button id="openbtn" onclick="toggleSidebar()">☰</button>
-        <h1>CodeLANG</h1>
-        <div class="logout-btn">
-            <a href="/home/employee_logout/">Logout</a>
-        </div>
-    </div>
-
-    <div id="main-content" class="container">
-        {% if messages %}
-        {% for message in messages %}
-            {% if message.tags == 'success' %}
-                <div class="alert alert-success" role="alert">
-                    {{ message }}
-                </div>
-            {% elif message.tags == 'error' %}
-                <div class="alert alert-danger" role="alert">
-                    {{ message }}
-                </div>
-            {% endif %}
+        <h3 style="margin-top:28px">Existing test cases</h3>
+        {% for p in all_problems %}
+          <h4 style="margin-top:16px">{{ p.Name }}</h4>
+          {% for c in p.test_cases.all %}
+            <form method="post" class="case-row">{% csrf_token %}
+              <input type="hidden" name="action" value="delete_case"><input type="hidden" name="case_id" value="{{ c.id }}">
+              <span><span class="badge {% if c.is_sample %}easy{% endif %}">{% if c.is_sample %}sample{% else %}hidden{% endif %}</span>
+                <code>{{ c.input_data|truncatechars:40 }}</code> &rarr; <code>{{ c.expected_output|truncatechars:40 }}</code></span>
+              <button class="btn sm danger" type="submit">Delete</button>
+            </form>
+          {% empty %}<div class="muted">No test cases yet.</div>
+          {% endfor %}
         {% endfor %}
-        {% endif %}
+      </section>
 
-        <div class="container mt-5">
-            <!-- Create Problem Form -->
-            <div id="createForm" class="form-section">
-                <h2><span style="color: #780909;">Add Problem</span></h2>
-                <form method="post" enctype="multipart/form-data" action="{% url 'manage_problem' %}">
-                    {% csrf_token %}
-                    <hr>
-
-                    <div class="form-group">
-                        <label class="form-label" for="formName"><font color="white">Name</font></label>
-                        <input type="text" name="Name" id="formName" class="form-control" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="formLevel"><font color="white">Level</font></label>
-                        <input type="text" name="level" id="formLevel" class="form-control" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="formDesc"><font color="white">Description</font></label>
-                        <input type="text" name="desc" id="formDesc" class="form-control" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="input_test"><font color="white">Input Test:</font></label><br>
-                        <textarea rows="5" cols="30" name="input_test" id="input_test" spellcheck="false" required></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="output_test"><font color="white">Output Test:</font></label><br>
-                        <textarea rows="5" cols="30" name="output_test" id="output_test" required></textarea>
-                    </div>
-
-                    <input type="hidden" name="action" value="create" />
-                    <button type="submit" class="btn btn-primary btn-block mb-4">Create</button>
-                </form>
-            </div>
-
-            <hr>
-
-            <!-- Update Problem Form -->
-            <div id="updateForm" class="form-section">
-                <h2><span style="color: #780909;">Update Problem</span></h2>
-                <form method="post" enctype="multipart/form-data" action="{% url 'manage_problem' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="updateProblemSelect"><font color="white">Select Problem to Update:</font></label>
-                        <select id="updateProblemSelect" name="update_id" class="form-control" required>
-                            <option value="">Select a problem</option>
-                            {% for problem in all_problems %}
-                            <option value="{{ problem.id }}">{{ problem.Name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="updateName"><font color="white">Name</font></label>
-                        <input type="text" name="Name" id="updateName" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="updateLevel"><font color="white">Level</font></label>
-                        <input type="text" name="level" id="updateLevel" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="updateDesc"><font color="white">Description</font></label>
-                        <input type="text" name="desc" id="updateDesc" class="form-control" />
-                    </div>
-
-                    <input type="hidden" name="action" value="update" />
-                    <button type="submit" class="btn btn-primary btn-block mb-4">Update</button>
-                </form>
-            </div>
-
-            <hr>
-
-            <!-- Delete Problem Form -->
-            <div id="deleteForm" class="form-section">
-                <h2><span style="color: #780909;">Delete Problem</span></h2>
-                <form method="post" enctype="multipart/form-data" action="{% url 'manage_problem' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="deleteProblemSelect"><font color="white">Select Problem to Delete:</font></label>
-                        <select id="deleteProblemSelect" name="delete_id" class="form-control" required>
-                            <option value="">Select a problem</option>
-                            {% for problem in all_problems %}
-                            <option value="{{ problem.id }}">{{ problem.Name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <input type="hidden" name="action" value="delete" />
-                    <button type="submit" class="btn btn-danger btn-block mb-4">Delete</button>
-                </form>
-            </div>
-            <hr>
-
-            <!-- Test cases -->
-            <div id="casesForm" class="form-section">
-                <h2><span style="color: #780909;">Test Cases</span></h2>
-                <form method="post" action="{% url 'manage_problem' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="caseProblem"><font color="white">Problem:</font></label>
-                        <select id="caseProblem" name="problem_id" class="form-control" required>
-                            {% for problem in all_problems %}<option value="{{ problem.id }}">{{ problem.Name }}</option>{% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="caseInput"><font color="white">Input:</font></label><br>
-                        <textarea rows="4" cols="30" name="input_data" id="caseInput" spellcheck="false"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="caseOutput"><font color="white">Expected output:</font></label><br>
-                        <textarea rows="4" cols="30" name="expected_output" id="caseOutput" required></textarea>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" name="is_sample" id="caseSample" class="form-check-input" />
-                        <label for="caseSample" class="form-check-label"><font color="white">Sample (visible to users)</font></label>
-                    </div>
-                    <input type="hidden" name="action" value="add_case" />
-                    <button type="submit" class="btn btn-primary mb-4">Add test case</button>
-                </form>
-
-                {% for problem in all_problems %}
-                <h5><font color="white">{{ problem.Name }}</font></h5>
-                {% for case in problem.test_cases.all %}
-                <form method="post" action="{% url 'manage_problem' %}" class="mb-2">
-                    {% csrf_token %}
-                    <font color="white">Case {{ forloop.counter }} ({% if case.is_sample %}sample{% else %}hidden{% endif %}): <code>{{ case.input_data|truncatechars:40 }}</code> &rarr; <code>{{ case.expected_output|truncatechars:40 }}</code></font>
-                    <input type="hidden" name="action" value="delete_case" />
-                    <input type="hidden" name="case_id" value="{{ case.id }}" />
-                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                </form>
-                {% empty %}<p><font color="white">No test cases yet.</font></p>
-                {% endfor %}
-                {% endfor %}
-            </div>
-        </div>
+      <!-- DELETE -->
+      <section class="admin-section card" id="sec-delete">
+        <h3>Delete problem</h3>
+        <form method="post" onsubmit="return confirm('Delete this problem and all its test cases and submissions?')">{% csrf_token %}
+          <input type="hidden" name="action" value="delete">
+          <div class="field"><label for="d-id">Problem</label>
+            <select id="d-id" name="delete_id" required><option value="">Select a problem</option>
+              {% for p in all_problems %}<option value="{{ p.id }}">{{ p.Name }}</option>{% endfor %}</select></div>
+          <button class="btn danger" type="submit">Delete</button>
+        </form>
+      </section>
     </div>
-
-    <script>
-        // Function to toggle sidebar
-        function toggleSidebar() {
-            var sidebar = document.getElementById("mySidebar");
-            var mainContent = document.getElementById("main-content");
-            if (sidebar.style.width === "250px") {
-                sidebar.style.width = "0";
-                mainContent.style.marginLeft = "0";
-            } else {
-                sidebar.style.width = "250px";
-                mainContent.style.marginLeft = "250px";
-            }
-        }
-
-        // Function to show specific form and hide others
-        function showForm(formId) {
-            // Hide all forms
-            var forms = document.querySelectorAll('.form-section');
-            forms.forEach(function(form) {
-                form.style.display = 'none';
-            });
-
-            // Show the selected form
-            var selectedForm = document.getElementById(formId);
-            if (selectedForm) {
-                selectedForm.style.display = 'block';
-            }
-        }
-    </script>
-</body>
-</html>
-
-
-
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}
+<script>
+  var links = document.querySelectorAll("#side a");
+  function open(name) {
+    [].forEach.call(links, function (a) { a.classList.toggle("on", a.dataset.sec === name); });
+    [].forEach.call(document.querySelectorAll(".admin-section"), function (s) { s.classList.toggle("on", s.id === "sec-" + name); });
+    history.replaceState(null, "", "#" + name);
+  }
+  [].forEach.call(links, function (a) { a.addEventListener("click", function () { open(a.dataset.sec); }); });
+  var h = location.hash.slice(1); if (h && document.getElementById("sec-" + h)) open(h);
+</script>
+{% endblock %}

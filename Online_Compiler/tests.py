@@ -4,7 +4,7 @@ from types import SimpleNamespace
 from unittest import skipUnless
 
 from django.contrib.auth.models import User
-from django.test import TestCase as DjangoTestCase
+from django.test import TestCase as DjangoTestCase, override_settings
 from django.urls import reverse
 
 from Online_Compiler import judge
@@ -19,6 +19,7 @@ def case(inp, out, sample=False):
 ADD = "a,b=map(int,input().split())\nprint(a+b)\n"
 
 
+@override_settings(JUDGE_BACKEND="local")
 class JudgeEngineTests(DjangoTestCase):
     def test_accepted(self):
         r = judge.judge("python", ADD, [case("1 2\n", "3\n"), case("5 7\n", "12")])
@@ -86,6 +87,7 @@ class JudgeEngineTests(DjangoTestCase):
         self.assertEqual(judge.judge("c", src, [case("2 3", "5")]).verdict, judge.AC)
 
 
+@override_settings(JUDGE_BACKEND="local")
 class SubmitViewTests(DjangoTestCase):
     def setUp(self):
         self.user = User.objects.create_user("u1", password="pw12345!")

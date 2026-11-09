@@ -1,5 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -21,10 +23,15 @@ def submit_page(request, id):
     prob = get_object_or_404(problem, id=id)
     language = _clean_language(request.POST.get("language"))
     code = request.POST.get("code", "")
+    ajax = request.headers.get("x-requested-with") == "XMLHttpRequest"
     if language is None or not code.strip():
+        if ajax:
+            return JsonResponse({"error": "Choose a language and write some code before submitting."}, status=400)
         messages.error(request, "Choose a language and write some code before submitting.")
         return redirect("problem-details", id=prob.id)
     if len(code) > MAX_CODE_LENGTH:
+        if ajax:
+            return JsonResponse({"error": "Code is too long."}, status=400)
         messages.error(request, "Code is too long.")
         return redirect("problem-details", id=prob.id)
 
@@ -35,7 +42,15 @@ def submit_page(request, id):
         passed=result.passed, total=result.total,
     )
     # Per-case details are only needed for this response, so keep them in the session.
-    request.session[f"cases_{sub.id}"] = [vars(c) for c in result.cases]
+    cases = [vars(c) for c in result.cases]
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({
+            "id": sub.id, "verdict": sub.verdict, "label": sub.verdict_label,
+            "message": sub.message, "passed": sub.passed, "total": sub.total,
+            "time_ms": sub.time_ms, "cases": cases,
+            "url": reverse("submission-detail", args=[sub.id]),
+        })
+    request.session[f"cases_{sub.id}"] = cases
     return redirect("submission-detail", sub_id=sub.id)
 
 
