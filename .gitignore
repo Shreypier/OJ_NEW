@@ -11,3 +11,10 @@ outputs/
 test_outputs/
 user_output/
 user_outputs/
+
+# local database and server secrets
+db.sqlite3
+*.sqlite3
+/etc/
+deploy/*.env
+venv/

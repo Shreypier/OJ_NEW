@@ -21,23 +21,39 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get(
-    'DJANGO_SECRET_KEY',
-    'django-insecure-+72y=+7b1lpigg=luxb&dg3k())ssnu8=qm#pzrl!v5j3f3*ik')
-
-# SECURITY WARNING: don't run with debug turned on in production!
+#
+# Production is configured entirely through environment variables (see
+# deploy/codelang.env.example). With none set you get a working development setup.
 DEBUG = os.environ.get('DJANGO_DEBUG', '1') == '1'
 
-ALLOWED_HOSTS = ['*']
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
+if not SECRET_KEY:
+    if not DEBUG:
+        from django.core.exceptions import ImproperlyConfigured
+        raise ImproperlyConfigured('Set DJANGO_SECRET_KEY when DJANGO_DEBUG=0')
+    SECRET_KEY = 'django-insecure-development-key-do-not-use-in-production'
+
+
+def env_list(name):
+    return [v.strip() for v in os.environ.get(name, '').split(',') if v.strip()]
+
+
+# In development any host is fine; in production only the hosts you list.
+ALLOWED_HOSTS = ['*'] if DEBUG else env_list('DJANGO_ALLOWED_HOSTS')
+# e.g. https://yourname.duckdns.org (needed for form posts over HTTPS behind Nginx)
+CSRF_TRUSTED_ORIGINS = env_list('DJANGO_CSRF_TRUSTED_ORIGINS')
+
+# Set DJANGO_HTTPS=1 once the site is served over HTTPS (after certbot).
+HTTPS = os.environ.get('DJANGO_HTTPS', '0') == '1'
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Nginx terminates TLS
+    SESSION_COOKIE_SECURE = HTTPS
+    CSRF_COOKIE_SECURE = HTTPS
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30 if HTTPS else 0
 
 import os 
 STATIC_URL = '/static/'
-STATIC_ROOT= os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIR = {
-    os.path.join(BASE_DIR, 'public/static')
-}
-MEDIA_ROOT = os.path.join(BASE_DIR, 'public/static')
-MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Application definition
 
@@ -62,6 +78,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if not DEBUG:
+    # Serves the collected static files (CSS) straight from Gunicorn, compressed and cached.
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+    STORAGES = {
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+        'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'},
+    }
 
 ROOT_URLCONF = 'Online_Judge.urls'
 
@@ -92,7 +116,8 @@ WSGI_APPLICATION = 'Online_Judge.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # In production the database lives outside the code folder (DJANGO_DB_PATH).
+        'NAME': os.environ.get('DJANGO_DB_PATH', BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -144,8 +169,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # "local":  runs on the host with only timeouts (development/tests, NOT safe).
 JUDGE_BACKEND = os.environ.get('JUDGE_BACKEND', 'docker')
 JUDGE_DOCKER_IMAGE = 'codelang-sandbox'
-JUDGE_CONTAINER_MEMORY_MB = 512
+JUDGE_CONTAINER_MEMORY_MB = int(os.environ.get('JUDGE_CONTAINER_MEMORY_MB', 512))
 JUDGE_COMPILE_TIMEOUT = 15      # seconds
 JUDGE_TIME_LIMIT = 10           # seconds per test case
 JUDGE_MEMORY_LIMIT_MB = 256     # enforced on Linux only
+# How many submissions may run in containers at the same time (keep low on small servers),
+# and how long an extra submission waits for a free slot before "judge is busy".
+JUDGE_MAX_CONCURRENT = int(os.environ.get('JUDGE_MAX_CONCURRENT', 2))
+JUDGE_QUEUE_WAIT = int(os.environ.get('JUDGE_QUEUE_WAIT', 60))   # seconds
 JUDGE_OUTPUT_LIMIT_BYTES = 1024 * 1024

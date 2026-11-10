@@ -87,6 +87,21 @@ class JudgeEngineTests(DjangoTestCase):
         self.assertEqual(judge.judge("c", src, [case("2 3", "5")]).verdict, judge.AC)
 
 
+@override_settings(JUDGE_BACKEND="docker")
+class JudgeCapacityTests(DjangoTestCase):
+    def test_busy_judge_returns_system_error_without_starting_a_container(self):
+        import threading
+        old = judge._slots, judge.QUEUE_WAIT
+        judge._slots, judge.QUEUE_WAIT = threading.BoundedSemaphore(1), 0.1
+        judge._slots.acquire()          # the only slot is taken
+        try:
+            r = judge.run_code("python", "print(1)", "")
+        finally:
+            judge._slots, judge.QUEUE_WAIT = old
+        self.assertEqual(r.verdict, judge.SE)
+        self.assertIn("busy", r.error)
+
+
 @override_settings(JUDGE_BACKEND="local")
 class SubmitViewTests(DjangoTestCase):
     def setUp(self):

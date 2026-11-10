@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -50,6 +51,12 @@ MAX_MESSAGE = 4000  # cap on compiler/stderr text we keep
 DOCKER_IMAGE = getattr(settings, "JUDGE_DOCKER_IMAGE", "codelang-sandbox")
 CONTAINER_MEMORY_MB = getattr(settings, "JUDGE_CONTAINER_MEMORY_MB", 512)
 DOCKER_STARTUP_SLACK = 20  # seconds allowed for container start-up/teardown
+
+# Only this many containers run at once; others wait up to QUEUE_WAIT seconds for a slot.
+# (Per process: run Gunicorn with one worker and several threads so the cap is global.)
+MAX_CONCURRENT = max(1, getattr(settings, "JUDGE_MAX_CONCURRENT", 2))
+QUEUE_WAIT = getattr(settings, "JUDGE_QUEUE_WAIT", 60)
+_slots = threading.BoundedSemaphore(MAX_CONCURRENT)
 
 
 @dataclass
@@ -304,7 +311,12 @@ def execute(language, code, inputs):
     backend = getattr(settings, "JUDGE_BACKEND", "docker")
     if backend == "local":
         return _execute_local(language, code, inputs)
-    return _execute_docker(language, code, inputs)
+    if not _slots.acquire(timeout=QUEUE_WAIT):
+        return _docker_unavailable("The judge is busy right now. Please try again in a moment.")
+    try:
+        return _execute_docker(language, code, inputs)
+    finally:
+        _slots.release()
 
 
 # --------------------------------------------------------------------------

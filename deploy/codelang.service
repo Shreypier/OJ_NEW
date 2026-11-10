@@ -1,0 +1,21 @@
+[Unit]
+Description=CodeLANG online judge (Gunicorn)
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+User=@APP_USER@
+Group=@APP_USER@
+SupplementaryGroups=docker
+WorkingDirectory=@APP_DIR@
+EnvironmentFile=/etc/codelang.env
+# One worker with several threads: the judge's "max containers at once" cap lives inside
+# the process, so a single worker keeps that cap global. The long timeout covers slow judging.
+ExecStart=@APP_DIR@/venv/bin/gunicorn Online_Judge.wsgi:application \
+    --worker-class gthread --workers 1 --threads 8 --timeout 180 \
+    --bind 127.0.0.1:8000 --access-logfile - --error-logfile -
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
