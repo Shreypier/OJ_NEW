@@ -1,5 +1,7 @@
 # CodeLANG: an online judge
 
+[![Tests](https://github.com/Shreypier/OJ_NEW/actions/workflows/tests.yml/badge.svg)](https://github.com/Shreypier/OJ_NEW/actions/workflows/tests.yml)
+
 A web platform where users solve programming problems in **Python, C and C++** and get instant
 verdicts from a judge that runs every submission in an isolated Docker container.
 

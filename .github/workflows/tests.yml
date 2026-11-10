@@ -1,0 +1,35 @@
+name: Tests
+
+# Runs the full test suite on every push and pull request to master.
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # The GitHub runner has Docker, so the sandbox tests (network blocked, fork bomb,
+      # memory hog, forged results, ...) run for real instead of being skipped.
+      - name: Build the judge sandbox image
+        run: docker build -t codelang-sandbox sandbox/
+
+      - name: Run Django checks
+        run: python manage.py check
+
+      - name: Run the test suite
+        run: python manage.py test --verbosity 2
