@@ -5,7 +5,7 @@
 A web platform where users solve programming problems in **Python, C and C++** and get instant
 verdicts from a judge that runs every submission in an isolated Docker container.
 
-> Live demo: _add your link here_
+> Live demo: **https://codelang.duckdns.org**
 
 ## Features
 
